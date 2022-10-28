@@ -21,10 +21,13 @@
 
 package org.firstinspires.ftc.teamcode.auto;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -90,6 +93,13 @@ public class autoCam1 extends LinearOpMode {
 
 
         //HARDWARE MAPPING HERE etc.
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
+        // build some trajectory
+        Trajectory myTrajectory = drive.trajectoryBuilder(new Pose2d())
+                .strafeRight(10)
+                .forward(5)
+                .build();
         /*
          * The INIT-loop:
          * This REPLACES waitForStart!
