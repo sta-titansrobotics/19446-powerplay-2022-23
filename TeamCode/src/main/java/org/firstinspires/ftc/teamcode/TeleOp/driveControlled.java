@@ -28,6 +28,10 @@ public class driveControlled extends LinearOpMode {
         DcMotor Arm = hardwareMap.get(DcMotor.class, "arm");
         Arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        //Claw
+        DcMotor Claw = hardwareMap.get(DcMotor.class, "claw");
+        Claw.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         //Lift
         DcMotor Lift = hardwareMap.get(DcMotor.class, "lift");
 
@@ -116,6 +120,11 @@ public class driveControlled extends LinearOpMode {
             }
 
             //Turret
+            double clawPower = gamepad2.right_trigger;
+
+            Claw.setPower(clawPower);
+
+            //Turret
             double turretPower = gamepad2.left_stick_x;
 
             Turret.setPower(turretPower);
@@ -138,6 +147,7 @@ public class driveControlled extends LinearOpMode {
             telemetry.addData("Arm Power:", Arm.getPower());
             telemetry.addData("Lift Power:", Lift.getPower());
             telemetry.addData("Turret Power:", Turret.getPower());
+            telemetry.addData("Claw Power:", Claw.getPower());
             telemetry.addData("Arm Encoder Position: ", Arm.getCurrentPosition());
             telemetry.update();
 
