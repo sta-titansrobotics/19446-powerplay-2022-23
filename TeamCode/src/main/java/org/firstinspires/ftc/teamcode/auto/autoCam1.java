@@ -91,15 +91,6 @@ public class autoCam1 extends LinearOpMode {
 
         telemetry.setMsTransmissionInterval(50);
 
-
-        //HARDWARE MAPPING HERE etc.
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-
-        // build some trajectory
-        Trajectory myTrajectory = drive.trajectoryBuilder(new Pose2d())
-                .strafeRight(10)
-                .forward(5)
-                .build();
         /*
          * The INIT-loop:
          * This REPLACES waitForStart!
@@ -182,8 +173,10 @@ public class autoCam1 extends LinearOpMode {
         // autonomous code here
         if(tagOfInterest == null || tagOfInterest.id == LEFT) {
             // left trajectory
+
         } else if (tagOfInterest.id == MIDDLE) {
             // middle trajectory
+
         } else {
             // right trajectory
         }
