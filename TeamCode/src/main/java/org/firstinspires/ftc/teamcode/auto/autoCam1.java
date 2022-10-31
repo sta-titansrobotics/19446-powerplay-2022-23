@@ -69,6 +69,18 @@ public class autoCam1 extends LinearOpMode {
     @Override
     public void runOpMode()
     {
+        // initialize some trajectory
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
+        Trajectory traj1 = drive.trajectoryBuilder(new Pose2d())
+                .strafeRight(10)
+                .build();
+
+        Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
+                .forward(5)
+                .build();
+
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
@@ -173,6 +185,7 @@ public class autoCam1 extends LinearOpMode {
         // autonomous code here
         if(tagOfInterest == null || tagOfInterest.id == LEFT) {
             // left trajectory
+            drive.followTrajectory(traj1);
 
         } else if (tagOfInterest.id == MIDDLE) {
             // middle trajectory
@@ -181,6 +194,7 @@ public class autoCam1 extends LinearOpMode {
             // right trajectory
         }
 
+        /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
     }
 
     void tagToTelemetry(AprilTagDetection detection)
