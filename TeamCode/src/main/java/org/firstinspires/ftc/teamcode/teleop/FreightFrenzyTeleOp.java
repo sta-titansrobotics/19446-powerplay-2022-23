@@ -4,8 +4,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
 
-//blah blah blah
 
 @TeleOp
 public class FreightFrenzyTeleOp extends LinearOpMode {
@@ -14,44 +15,31 @@ public class FreightFrenzyTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        //Moving
+        // Movement Motors
         DcMotor motorFL = hardwareMap.get(DcMotor.class, "motorFrontLeft");
         DcMotor motorBL = hardwareMap.get(DcMotor.class, "motorBackLeft");
         DcMotor motorFR = hardwareMap.get(DcMotor.class, "motorFrontRight");
         DcMotor motorBR = hardwareMap.get(DcMotor.class, "motorBackRight");
 
+        // Intake Motors
+        DcMotor motorLift = hardwareMap.get(DcMotor.class, "motorLift");
+        DcMotor motorTurret = hardwareMap.get(DcMotor.class, "motorTurret");
+        Servo servoSlider = hardwareMap.get(Servo.class, "servoTurret");
+        Servo servoClaw = hardwareMap.get(Servo.class, "servoClaw");
+
         //Reverse left side motors
         motorFL.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBL.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        //Intake
-        DcMotor Intake = hardwareMap.get(DcMotor.class, "intake");
-
-        Intake.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        //Arm
-        DcMotor Arm = hardwareMap.get(DcMotor.class, "arm");
-        Arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        //Carousel
-        DcMotor Carousel = hardwareMap.get(DcMotor.class, "carousel");
-
-        Carousel.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        //Turret
-        DcMotor Turret = hardwareMap.get(DcMotor.class, "turret");
-        Turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
         waitForStart();
 
         if (isStopRequested()) return;
 
-
         while (opModeIsActive()) {
 
             //Driving
-
             double y = -gamepad1.left_stick_y; // Remember, this is reversed!
 
             //STRAFING VARIABLE
@@ -99,48 +87,61 @@ public class FreightFrenzyTeleOp extends LinearOpMode {
                 motorBR.setPower(1);
             }
 
-            //Intake
-            double intakePower = gamepad2.left_stick_y * 0.80;
+            double sliderPos, clawPos;
+            double MIN_POSITION = 0, MAX_POSITION = 1;
 
-            Intake.setPower(intakePower);
+            // reset slider pos and open claw
+            sliderPos = 0.5;
+            clawPos = 1;
 
-            //Arm
-            double armPower = gamepad2.right_stick_y;
 
-            Arm.setPower(armPower);
+            // lift
+            double liftPower = gamepad2.left_stick_y;
 
-            //Carousel
+            motorLift.setPower(liftPower);
 
-            if (gamepad2.a) {
-                Carousel.setPower(0.85);
+            // turret
+            if (gamepad2.left_bumper) {
+                motorTurret.setPower(-1);
+            }
+            if (gamepad2.right_bumper) {
+                motorTurret.setPower(1);
+            } else {
+                motorTurret.setPower(0);
+            }
+
+            // horizontal slider
+            if (gamepad2.dpad_up && sliderPos < MAX_POSITION) {
+                sliderPos += 0.1;
 
             }
-            else {
-                Carousel.setPower(0);
-
+            if (gamepad2.dpad_down && sliderPos > MIN_POSITION) {
+                sliderPos -= -0.1;
             }
 
-            //Turret
-            double turretPowerLeft = gamepad2.left_trigger;
-            Turret.setPower(turretPowerLeft);
+            // claw a =
+            if (gamepad2.a && clawPos > MIN_POSITION) {
+                clawPos -= 0.1;
+            }
+            if (gamepad2.b && clawPos < MAX_POSITION) {
+                clawPos += 0.1;
+            }
 
-            double turretPowerRight = gamepad2.right_trigger;
-            Turret.setPower(-turretPowerRight);
+            servoSlider.setPosition(Range.clip(sliderPos, MIN_POSITION, MAX_POSITION));
+            servoClaw.setPosition(Range.clip(clawPos, MIN_POSITION, MAX_POSITION));
 
 
-
+            telemetry.addData("Motor Lift Power:", motorLift.getPower());
+            telemetry.addData("Motor Turret Power:", motorTurret.getPower());
+            telemetry.addData("Horizontal Slider Position:", servoSlider.getPosition());
+            telemetry.addData("Claw Position:", servoClaw.getPosition());
             telemetry.addData("LF Power:", motorFL.getPower());
             telemetry.addData("LB Power:", motorBL.getPower());
             telemetry.addData("RF Power:", motorFR.getPower());
             telemetry.addData("RB Power:", motorBR.getPower());
-            telemetry.addData("Intake Power: ", Intake.getPower());
-            telemetry.addData("Arm Power:", Arm.getPower());
-            telemetry.addData("Carousel Power:", Carousel.getPower());
-            telemetry.addData("Turret Power:", Turret.getPower());
-            telemetry.addData("Arm Encoder Position: ", Arm.getCurrentPosition());
             telemetry.update();
 
-
+            }
         }
     }
-}
+
