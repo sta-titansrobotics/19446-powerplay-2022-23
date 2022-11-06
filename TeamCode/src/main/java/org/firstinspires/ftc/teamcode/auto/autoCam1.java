@@ -28,6 +28,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.opencv.core.Point;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -56,6 +57,18 @@ public class autoCam1 extends LinearOpMode {
 
     // UNITS ARE METERS
     double tagsize = 0.166;
+
+    static final Point LEFT_TOPLEFT_ANCHORPOINT = new Point (0, 0);
+
+    static final int LEFT_WIDTH = 430;
+    static final int LEFT_HEIGHT = 720;
+
+    static final Point RIGHT_TOPLEFT_ANCHORPOINT = new Point (0, 0);
+
+    static final int RIGHT_WIDTH = 430;
+    static final int RIGHT_HEIGHT = 720;
+
+
 
     // Tag ID 1,2,3 from the 36h11 family
     /*EDIT IF NEEDED!!!*/
