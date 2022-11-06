@@ -33,12 +33,11 @@ import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
 
 import java.util.ArrayList;
 
 @TeleOp
-public class autoCam1 extends LinearOpMode {
+public class autoRedLeft extends LinearOpMode {
     //INTRODUCE VARIABLES HERE
 
     OpenCvCamera camera;
@@ -85,13 +84,23 @@ public class autoCam1 extends LinearOpMode {
         // initialize some trajectory
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        Trajectory traj1 = drive.trajectoryBuilder(new Pose2d())
-                .strafeRight(10)
+        Trajectory forward = drive.trajectoryBuilder(new Pose2d())
+                .forward(51.25)
                 .build();
 
-        Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
-                .forward(5)
+        Trajectory back = drive.trajectoryBuilder(forward.end())
+                .back(26)
                 .build();
+
+        Trajectory leftPark = drive.trajectoryBuilder(back.end())
+                .strafeLeft(23)
+                .build();
+
+        Trajectory rightPark = drive.trajectoryBuilder(back.end())
+                .strafeRight(23)
+                .build();
+
+
 
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -198,13 +207,29 @@ public class autoCam1 extends LinearOpMode {
         // autonomous code here
         if(tagOfInterest == null || tagOfInterest.id == LEFT) {
             // left trajectory
-            drive.followTrajectory(traj1);
+            drive.followTrajectory(forward);
+            // stack 5 cones on high junction
+
+            // left parking
+            drive.followTrajectory(back);
+            drive.followTrajectory(leftPark);
 
         } else if (tagOfInterest.id == MIDDLE) {
             // middle trajectory
+            drive.followTrajectory(forward);
+            // stack 5 cones on high junction
+
+            // middle parking
+            drive.followTrajectory(back);
 
         } else {
             // right trajectory
+            drive.followTrajectory(forward);
+            // stack 5 cones on high junction
+
+            // left parking
+            drive.followTrajectory(back);
+            drive.followTrajectory(rightPark);
         }
 
         /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
