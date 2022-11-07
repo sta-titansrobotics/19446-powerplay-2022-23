@@ -63,6 +63,43 @@ class AprilTagDetectionPipeline extends OpenCvPipeline
     double tagsizeX;
     double tagsizeY;
 
+    // BOUNDING BOX DIMENSIONS
+    //Left
+    static final Point LEFT_TOPLEFT_ANCHORPOINT = new Point (0, 0);
+
+    static final int LEFT_WIDTH = 430;
+    static final int LEFT_HEIGHT = 720;
+
+    Point leftRegion_pointA = new Point(
+            LEFT_TOPLEFT_ANCHORPOINT.x,
+            LEFT_TOPLEFT_ANCHORPOINT.y);
+
+    Point leftRegion_pointB = new Point(
+            LEFT_TOPLEFT_ANCHORPOINT.x + LEFT_WIDTH,
+            LEFT_TOPLEFT_ANCHORPOINT.y + LEFT_HEIGHT);
+
+    //Right
+    static final Point RIGHT_TOPLEFT_ANCHORPOINT = new Point (0, 0);
+
+    static final int RIGHT_WIDTH = 430;
+    static final int RIGHT_HEIGHT = 720;
+
+    //Middle
+    static final Point MIDDLE_TOPLEFT_ANCHORPOINT = new Point (430,360);
+
+    static final int MIDDLE_WIDTH = 420;
+    static final int MIDDLE_HEIGHT = 120;
+
+    //final int ONE_STACK_THRESHOLD = ___;
+    //final int TWO_STACK_THRESHOLD = ___;
+    //final int THREE_STACK_THRESHOLD = ___;
+    //final int FOUR_STACK_THRESHOLD = ___;
+    //final int FIVE_STACK_THRESHOLD = ___;
+    Mat LEFT_Cb;
+    Mat YCrCb = new Mat();
+    Mat Cb = new Mat();
+    int LEFT_AVG;
+
     private float decimation;
     private boolean needToSetDecimation;
     private final Object decimationSync = new Object();
