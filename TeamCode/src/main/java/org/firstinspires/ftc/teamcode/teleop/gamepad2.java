@@ -34,15 +34,9 @@ public class gamepad2 extends LinearOpMode {
         while (opModeIsActive()) {
 
             // lift
-            if (gamepad2.left_stick_y > 0) {
-                motorLift.setPower(-1);
-            }
-            if (gamepad2.left_stick_y < 0) {
-                motorLift.setPower(1);
-            }
-            else {
-                motorLift.setPower(0);
-            }
+            motorLift.setPower(gamepad2.left_stick_y);
+
+
 
             // turret
             if (gamepad2.left_bumper) {
