@@ -91,6 +91,10 @@ public class gamepad2 extends LinearOpMode {
                 }
             }
 
+            if(gamepad2.b) {
+                liftPreset = 1;
+            }
+
             if (liftPreset == 0) {
                 motorLift2.setTargetPosition(GROUND);
                 motorLift.setTargetPosition(GROUND);
