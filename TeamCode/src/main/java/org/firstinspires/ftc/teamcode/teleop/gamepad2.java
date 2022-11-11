@@ -34,7 +34,7 @@ public class gamepad2 extends LinearOpMode {
 
         // reset slider pos and open claw
         sliderPos = 0;
-        clawPos = 0;
+        clawPos = 0.5;
 
 
 
@@ -69,17 +69,22 @@ public class gamepad2 extends LinearOpMode {
                 motorTurret.setPower(0);
             }
 
+
+            telemetry.addData("Motorone:", motorLift.getCurrentPosition());
+            telemetry.addData("motortwo:", motorLift2.getCurrentPosition());
+            telemetry.update();
+
             // horizontal slider
             if (sliderPos > MIN_POSITION && sliderPos < MAX_POSITION) {
                 sliderPos += gamepad2.right_stick_y;
             }
 
             // claw a
-            if (gamepad2.left_trigger > 0 && clawPos > MIN_POSITION) {
-                clawPos -= -0.1;
+            if (gamepad2.left_trigger > 0) {
+                clawPos = 0.9;
             }
-            if (gamepad2.right_trigger < 0 && clawPos < MAX_POSITION) {
-                clawPos += 0.1;
+            if (gamepad2.right_trigger < 0) {
+                clawPos = 0.5;
             }
 
 
@@ -90,9 +95,15 @@ public class gamepad2 extends LinearOpMode {
                     liftPreset = 0;
                 }
 
+            }
+
+            if (gamepad2.dpad_down) {
+                liftPreset--;
+
                 if (liftPreset < 0) {
                     liftPreset = 3;
                 }
+
             }
 
             if(gamepad2.b) {
@@ -118,7 +129,7 @@ public class gamepad2 extends LinearOpMode {
 
 
             servoSlider.setPosition(Range.clip(sliderPos, MIN_POSITION, MAX_POSITION));
-            servoClaw.setPosition(Range.clip(clawPos, MIN_POSITION, MAX_POSITION));
+            servoClaw.setPosition(clawPos);
 
             telemetry.addData("Motor Lift Power:", motorLift.getPower());
             telemetry.addData("Motor Turret Power:", motorTurret.getPower());
