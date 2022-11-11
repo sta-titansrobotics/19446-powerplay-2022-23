@@ -89,6 +89,10 @@ public class gamepad2 extends LinearOpMode {
                 if (liftPreset > 3) {
                     liftPreset = 0;
                 }
+
+                if (liftPreset < 0) {
+                    liftPreset = 3;
+                }
             }
 
             if(gamepad2.b) {
