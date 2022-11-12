@@ -82,8 +82,7 @@ public class gamepad2 extends LinearOpMode {
             // claw a
             if (gamepad2.left_trigger > 0) {
                 clawPos = 0.9;
-            }
-            if (gamepad2.right_trigger < 0) {
+            } else if (gamepad2.right_trigger < 0) {
                 clawPos = 0.5;
             }
 
