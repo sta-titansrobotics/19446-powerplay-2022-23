@@ -33,7 +33,7 @@ public class redLeft {
                 .setConstraints(26.01, 30, 2.1322221755981445, Math.toRadians(180), 14.65)
                 .setDimensions(16, 17)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(-36, -70+8.5, Math.toRadians(0)))
+                        drive.trajectorySequenceBuilder(new Pose2d(-35.5, -62, Math.toRadians(0)))
 
                                 // preload cone
                                 .lineToConstantHeading(new Vector2d(-35, -4))

@@ -6,7 +6,7 @@ import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
-public class redRight {
+public class blueRight {
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(800);
 
@@ -15,13 +15,13 @@ public class redRight {
 
         switch (parkNum) {
             case 1:
-                vectorPark = new Pose2d(58, -11, Math.toRadians(180));
+                vectorPark = new Pose2d(-58, 11, 0);
                 break;
             case 2:
-                vectorPark = new Pose2d(36, -12, Math.toRadians(180));
+                vectorPark = new Pose2d(-36, 12, 0);
                 break;
             case 3:
-                vectorPark = new Pose2d(12, -11, Math.toRadians(180));
+                vectorPark = new Pose2d(-12, 11, 0);
                 break;
 
         }
@@ -33,35 +33,35 @@ public class redRight {
                 .setConstraints(26.01, 30, 2.1322221755981445, Math.toRadians(180), 14.65)
                 .setDimensions(16, 17)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(35.5, -62, Math.toRadians(180)))
+                        drive.trajectorySequenceBuilder(new Pose2d(-35.5, 62, Math.toRadians(0)))
 
                                 // preload cone
-                                .lineToConstantHeading(new Vector2d(35, -4))
-                                .lineToSplineHeading(new Pose2d(35.4, -11.1, Math.toRadians(135)))
+                                .lineToConstantHeading(new Vector2d(-35, 4))
+                                .lineToSplineHeading(new Pose2d(-35.4, 11.1, Math.toRadians(-45)))
                                 .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*drop cone*/})
                                 .waitSeconds(0.5)
 
                                 // first cycle
-                                .splineTo(new Vector2d(48.5, -12), Math.toRadians(0))
+                                .splineTo(new Vector2d(-58 + 9.5, 12), Math.toRadians(-180))
                                 .UNSTABLE_addTemporalMarkerOffset(2, () -> {/*pick up cone*/})
                                 .waitSeconds(0.4)
-                                .lineToSplineHeading(new Pose2d(35, -12, Math.toRadians(130)))
+                                .lineToSplineHeading(new Pose2d(-35, 12, Math.toRadians(-50)))
                                 .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*drop cone*/})
                                 .waitSeconds(0.5)
 
                                 // second cycle
-                                .lineToSplineHeading(new Pose2d(48.5, -12, Math.toRadians(0)))
+                                .lineToSplineHeading(new Pose2d(-58 + 9.5, 12, Math.toRadians(-180)))
                                 .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*pick up cone*/})
                                 .waitSeconds(0.5)
-                                .lineToSplineHeading(new Pose2d(35, -12, Math.toRadians(130)))
+                                .lineToSplineHeading(new Pose2d(-35, 12, Math.toRadians(-50)))
                                 .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*drop cone*/})
                                 .waitSeconds(0.5)
 
                                 // third cycle
-                                .lineToSplineHeading(new Pose2d(48.5, -12, Math.toRadians(0)))
+                                .lineToSplineHeading(new Pose2d(-58 + 9.5, 12, Math.toRadians(-180)))
                                 .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*pick up cone*/})
                                 .waitSeconds(0.5)
-                                .lineToSplineHeading(new Pose2d(35, -12, Math.toRadians(130)))
+                                .lineToSplineHeading(new Pose2d(-35, 12, Math.toRadians(-50)))
                                 .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*drop cone*/})
                                 .waitSeconds(0.5)
 
