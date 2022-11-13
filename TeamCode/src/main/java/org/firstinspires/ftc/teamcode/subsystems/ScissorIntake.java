@@ -4,8 +4,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
+
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
+/**
+ * Subsystem modelling the Scissor intake mechanism
+ */
 
 public class ScissorIntake {
 
@@ -22,6 +26,13 @@ public class ScissorIntake {
     private final double RP_BOTTOM_POSITION = 1.0;
     private final double RP_HOME_POSITION = 0.0;
 
+    /**
+     *
+     * @param rbtRPServo - rack & pinion servo from robot (vertical)
+     * @param rbtScissorServo - scissor servo from robot
+     * @param rbtScissorTouch - scissor touch sensor from robot
+     * @param rbtConeDistanceSensor - distance sensor for cone detection
+     */
     public ScissorIntake(Servo rbtRPServo, Servo rbtScissorServo, TouchSensor rbtScissorTouch, DistanceSensor rbtConeDistanceSensor){
         this.rpServo = rbtRPServo;
         this.scissorServo = rbtScissorServo;
@@ -41,7 +52,7 @@ public class ScissorIntake {
      * Check if the scissor touch sensor is press
      * @return true if the scissor touch sensor is pressed
      */
-    public boolean isConeInScissor(){
+    public boolean isScissorInCone(){
         return this.scissorTouch.isPressed();
     }
 
@@ -87,11 +98,11 @@ public class ScissorIntake {
 
         // move the scissor down until bottom or cone detected in scissor
         if (isConeInBracket()){
-            while (this.rpServo.getPosition() > this.RP_BOTTOM_POSITION || !this.isConeInScissor()){
+            while (this.rpServo.getPosition() > this.RP_BOTTOM_POSITION || !this.isScissorInCone()){
                 this.rpServo.setPosition(this.rpServo.getPosition() + 0.1);
             }
 
-            if (this.isConeInScissor()){
+            if (this.isScissorInCone()){
                 this.contractScissor();
                 this.moveScissorToTop();
                 return true;
@@ -101,24 +112,11 @@ public class ScissorIntake {
         return false;
     }
 
-
+    /**
+     * bring scissor arms to their position, releasing the cone
+     */
     public void releaseCone(){
         this.scissorServo.setPosition(0);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }
