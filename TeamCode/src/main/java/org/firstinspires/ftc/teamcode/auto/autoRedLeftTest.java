@@ -24,6 +24,7 @@ package org.firstinspires.ftc.teamcode.auto;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -38,7 +39,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@TeleOp
+@Autonomous
 public class autoRedLeftTest extends LinearOpMode {
 
     @Override
@@ -147,14 +148,15 @@ public class autoRedLeftTest extends LinearOpMode {
 
                 // third cycle
                 .lineToSplineHeading(new Pose2d(-58 + 9.5, -12, Math.PI))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*pick up cone*/})
+                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {
+                    /*pick up cone*/})
                 .waitSeconds(0.5)
                 .lineToSplineHeading(new Pose2d(-35, -12, Math.toRadians(50)))
                 .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*drop cone*/})
                 .waitSeconds(0.5)
 
                 // park
-                .lineToSplineHeading(new Pose2d(-12, -11, 0))
+                .lineToSplineHeading(new Pose2d(-12, -11, Math.toRadians(90)))
                 .build();
 
         waitForStart();

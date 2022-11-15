@@ -10,7 +10,7 @@ public class redLeft {
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(800);
 
-        int parkNum = 1;
+        int parkNum = 3;
         Pose2d vectorPark = new Pose2d(0, 0);
 
         switch (parkNum) {
@@ -21,7 +21,7 @@ public class redLeft {
                 vectorPark = new Pose2d(-36, -12, 0);
                 break;
             case 3:
-                vectorPark = new Pose2d(-12, -11, 0);
+                vectorPark = new Pose2d(-12, -11, Math.toRadians(90));
                 break;
 
         }
