@@ -56,7 +56,8 @@ public class autoRedLeftTest extends LinearOpMode {
         TrajectorySequence leftTraj = drive.trajectorySequenceBuilder(startPose)
                 // preload cone
                 .lineToConstantHeading(new Vector2d(-35, -4))
-                .lineToSplineHeading(new Pose2d(-35.4, -11.1, Math.toRadians(45)))
+                .strafeLeft(-11)
+                .turn(Math.toRadians(45))
                 .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*drop cone*/})
                 .waitSeconds(0.5)
 
@@ -91,7 +92,8 @@ public class autoRedLeftTest extends LinearOpMode {
         TrajectorySequence middleTraj = drive.trajectorySequenceBuilder(startPose)
                 // preload cone
                 .lineToConstantHeading(new Vector2d(-35, -4))
-                .lineToSplineHeading(new Pose2d(-35.4, -11.1, Math.toRadians(45)))
+                .strafeLeft(-11)
+                .turn(Math.toRadians(45))
                 .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*drop cone*/})
                 .waitSeconds(0.5)
 
@@ -126,7 +128,8 @@ public class autoRedLeftTest extends LinearOpMode {
         TrajectorySequence rightTraj = drive.trajectorySequenceBuilder(startPose)
                 // preload cone
                 .lineToConstantHeading(new Vector2d(-35, -4))
-                .lineToSplineHeading(new Pose2d(-35.4, -11.1, Math.toRadians(45)))
+                .strafeLeft(-11)
+                .turn(Math.toRadians(45))
                 .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*drop cone*/})
                 .waitSeconds(0.5)
 

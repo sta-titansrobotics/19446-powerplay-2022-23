@@ -36,8 +36,9 @@ public class redLeft {
                         drive.trajectorySequenceBuilder(new Pose2d(-35.5, -62, Math.toRadians(0)))
 
                                 // preload cone
-                                .lineToConstantHeading(new Vector2d(-35, -4))
-                                .lineToSplineHeading(new Pose2d(-35.4, -11.1, Math.toRadians(45)))
+                                .lineToConstantHeading(new Vector2d(-35, 0))
+                                .strafeLeft(-11)
+                                .turn(Math.toRadians(45))
                                 .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*drop cone*/})
                                 .waitSeconds(0.5)
 
@@ -45,7 +46,7 @@ public class redLeft {
                                 .splineTo(new Vector2d(-58 + 9.5, -12), Math.PI)
                                 .UNSTABLE_addTemporalMarkerOffset(2, () -> {/*pick up cone*/})
                                 .waitSeconds(0.4)
-                                .lineToSplineHeading(new Pose2d(-35, -12, Math.toRadians(50)))
+                                .lineToSplineHeading(new Pose2d(-35, -1, Math.toRadians(50)))
                                 .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*drop cone*/})
                                 .waitSeconds(0.5)
 
