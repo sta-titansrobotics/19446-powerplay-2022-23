@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
 
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
@@ -12,7 +13,8 @@ public class ScissorIntake {
     private Servo rpServo;  // the servo that controls the rack and pinion
     private Servo scissorServo; // servo that controls the scissor mechanism;
     private TouchSensor scissorTouch; // scissor touch sensor
-    private DistanceSensor coneDistanceSensor; // cone touch sensor
+    private ColorSensor colorSensor; // cone touch sensor
+
 
     private final double CONE_DISTANCE_THRESHOLD_MM = 5;  // in mm, need to figure out this value
     private final double SCISSOR_HOME_POSITION = 0;
@@ -21,18 +23,22 @@ public class ScissorIntake {
     private final double RP_TOP_POSITION = -1.0;
     private final double RP_BOTTOM_POSITION = 1.0;
     private final double RP_HOME_POSITION = 0.0;
+    private final double REDTHRESHOLD = 10000;
+    private final double BLUETHRESHOLD = 10000;
 
     /**
      * @param rbtRPServo            - rack & pinion servo from robot (vertical)
      * @param rbtScissorServo       - scissor servo from robot
      * @param rbtScissorTouch       - scissor touch sensor from robot
-     * @param rbtConeDistanceSensor - distance sensor for cone detection
+     * @param rbtConeColorSensor - color sensor for cone detection
      */
-    public ScissorIntake(Servo rbtRPServo, Servo rbtScissorServo, TouchSensor rbtScissorTouch, DistanceSensor rbtConeDistanceSensor) {
+    public ScissorIntake(Servo rbtRPServo, Servo rbtScissorServo, TouchSensor rbtScissorTouch, ColorSensor rbtConeColorSensor) {
         this.rpServo = rbtRPServo;
         this.scissorServo = rbtScissorServo;
         this.scissorTouch = rbtScissorTouch;
-        this.coneDistanceSensor = rbtConeDistanceSensor;
+        this.colorSensor = rbtConeColorSensor;
+
+
     }
 
     /**
@@ -41,7 +47,14 @@ public class ScissorIntake {
      * @return true if the cone distance is less than the determined threshold
      */
     public boolean isConeInBracket() {
-        return this.coneDistanceSensor.getDistance(DistanceUnit.MM) < this.CONE_DISTANCE_THRESHOLD_MM;
+        if (colorSensor.red() > REDTHRESHOLD) {
+            return true;
+        } else if (colorSensor.blue() > BLUETHRESHOLD) {
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
     /**
@@ -117,3 +130,4 @@ public class ScissorIntake {
         this.scissorServo.setPosition(0);
     }
 }
+

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -33,23 +34,19 @@ public class Powerplay extends LinearOpMode {
         // Other
         DcMotor motorLift = hardwareMap.get(DcMotor.class, "leftLift");
         DcMotor motorLift2 = hardwareMap.get(DcMotor.class, "rightLift");
-        DcMotor motorTurret = hardwareMap.get(DcMotor.class, "motorTurret");
         Servo servoSlider = hardwareMap.get(Servo.class, "servoTurret");
         Servo servoScissor = hardwareMap.get(Servo.class, "servoScissor");
         Servo servoScissorLift = hardwareMap.get(Servo.class, "servoScissorLift");
         TouchSensor tSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
-        DistanceSensor dSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
+        ColorSensor cSensor = hardwareMap.get(ColorSensor.class, "distanceSensor");
         TouchSensor liftSensorRight = hardwareMap.get(TouchSensor.class, "liftSensorRight");
         TouchSensor liftSensorLeft = hardwareMap.get(TouchSensor.class, "liftSensorLeft");
 
-        // set motorTurret to encoder mode
-        motorTurret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
         // create scissorintake object
-        ScissorIntake intake = new ScissorIntake(servoScissorLift, servoScissor, tSensor, dSensor);
+        ScissorIntake intake = new ScissorIntake(servoScissorLift, servoScissor, tSensor, cSensor);
 
         double sliderPos;
-        double MIN_POSITION = 0, MAX_POSITION = 1;
+        double MIN_POSITION = 0, MAX_POSITION = 1, MAX_LIFT_POSITION = 100000;
         int liftPreset = 0;
         int GROUND = 0;
         int LOW = 0;
@@ -60,6 +57,7 @@ public class Powerplay extends LinearOpMode {
 
         // reset slider pos
         sliderPos = 0.5;
+        double scissorPos = 0;
 
 
         if (isStopRequested()) return;
@@ -90,32 +88,42 @@ public class Powerplay extends LinearOpMode {
             // lift
 
             if (gamepad2.left_stick_y > 0) {
-                motorLift.setPower(gamepad2.left_stick_y);
-                motorLift2.setPower(-gamepad2.left_stick_y);
+                motorLift.setTargetPosition(motorLift.getTargetPosition() + 100);
+                motorLift2.setPower(motorLift.getTargetPosition() + 100);
+
+                motorLift2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                motorLift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+                if(motorLift.getTargetPosition() == MAX_LIFT_POSITION) {
+                    if (tSensor.isPressed()) {
+                        scissorPos -= gamepad2.left_stick_y;
+                    }
+                }
+
             }
 
             if(gamepad2.left_stick_y < 0) {
-                motorLift.setPower(gamepad2.left_stick_y);
-                motorLift2.setPower(-gamepad2.left_stick_y);
+                motorLift.setTargetPosition(motorLift.getTargetPosition() + 100);
+                motorLift2.setPower(motorLift.getTargetPosition() + 100);
+
+                motorLift2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                motorLift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
                 if (tSensor.isPressed()) {
-
+                    scissorPos += gamepad2.left_stick_y;
                 }
             }
 
 
 
 
-            // turret
-            if (gamepad2.left_bumper) {
-                motorTurret.setPower(-0.5);
-            }
-            if (gamepad2.right_bumper) {
-                motorTurret.setPower(0.5);
-            }
-            else {
-                motorTurret.setPower(0);
-            }
+
 
 
             // intake
@@ -160,28 +168,51 @@ public class Powerplay extends LinearOpMode {
             if (liftPreset == 0) {
                 motorLift2.setTargetPosition(GROUND);
                 motorLift.setTargetPosition(GROUND);
+
+                motorLift2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                motorLift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
             } else if(liftPreset == 1) {
                 motorLift2.setTargetPosition(LOW);
                 motorLift.setTargetPosition(LOW);
+
+                motorLift2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                motorLift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
             } else if (liftPreset == 2) {
                 motorLift2.setTargetPosition(MIDDLE);
                 motorLift.setTargetPosition(MIDDLE);
+                motorLift2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                motorLift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
             } else if(liftPreset == 3) {
                 motorLift2.setTargetPosition(HIGH);
                 motorLift.setTargetPosition(HIGH);
+                motorLift2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                motorLift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
             }
 
 
 
-
-            motorLift2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
             servoSlider.setPosition(Range.clip(sliderPos, MIN_POSITION, MAX_POSITION));
+            servoScissor.setPosition(Range.clip(scissorPos, MIN_POSITION, MAX_POSITION));
 
 
             telemetry.addData("Motor Lift Power:", motorLift.getPower());
-            telemetry.addData("Motor Turret Power:", motorTurret.getPower());
             telemetry.addData("Horizontal Slider Position:", servoSlider.getPosition());
 
 
