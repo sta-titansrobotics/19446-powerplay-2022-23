@@ -46,120 +46,111 @@ public class autoRedLeftTest extends LinearOpMode {
     public void runOpMode()
     {
 
+        int parkNum = 1;
+        Pose2d vectorPark = new Pose2d(0, 0);
+
+        switch (parkNum) {
+            case 1:
+                vectorPark = new Pose2d(-58, -12, Math.toRadians(180));
+                break;
+            case 2:
+                vectorPark = new Pose2d(-36, -12, Math.toRadians(180));
+                break;
+            case 3:
+                vectorPark = new Pose2d(-12, -12, Math.toRadians(180));
+                break;
+
+        }
+        Pose2d finalVectorPark = vectorPark;
+
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        Pose2d startPose = new Pose2d(-35.5, -62, Math.toRadians(0));
+        Pose2d startPose = new Pose2d(-35.5, -61.5, Math.toRadians(90));
 
         drive.setPoseEstimate(startPose);
 
         TrajectorySequence leftTraj = drive.trajectorySequenceBuilder(startPose)
                 // preload cone
-                .lineToConstantHeading(new Vector2d(-35, -4))
-                .strafeLeft(-11)
-                .turn(Math.toRadians(45))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*drop cone*/})
-                .waitSeconds(0.5)
+                .lineToSplineHeading(new Pose2d(-11.5, -61.5, Math.toRadians(90)))
+                .lineToSplineHeading(new Pose2d(-11.6, -11.5, Math.toRadians(90)))
+                .turn(Math.toRadians(42))
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                    /*
+                     * lift up
+                     * move turret
+                     * drop cone
+                     * lift down
+                     */
+                })
+                .waitSeconds(1)
+                .turn(Math.toRadians(48))
 
                 // first cycle
-                .splineTo(new Vector2d(-58 + 9.5, -12), Math.PI)
-                .UNSTABLE_addTemporalMarkerOffset(2, () -> {/*pick up cone*/})
-                .waitSeconds(0.4)
-                .lineToSplineHeading(new Pose2d(-35, -12, Math.toRadians(50)))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*drop cone*/})
-                .waitSeconds(0.5)
+                .lineToSplineHeading(new Pose2d(-48.5, -12, Math.toRadians(180)))
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                    /*
+                     * move turret
+                     * pick up cone
+                     *
+                     */
+                })
+                .waitSeconds(1)
+                .lineToSplineHeading(new Pose2d(-24, -12, Math.toRadians(180)))
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                    /*
+                     * lift up (during traj)
+                     * turret 90 degrees
+                     * drop cone
+                     * lift down (during traj)
+                     */
+                })
+                .waitSeconds(1)
 
                 // second cycle
-                .lineToSplineHeading(new Pose2d(-58 + 9.5, -12, Math.PI))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*pick up cone*/})
-                .waitSeconds(0.5)
-                .lineToSplineHeading(new Pose2d(-35, -12, Math.toRadians(50)))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*drop cone*/})
-                .waitSeconds(0.5)
+                .lineToSplineHeading(new Pose2d(-48.5, -12, Math.toRadians(180)))
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                    /*
+                     * move turret
+                     * pick up cone
+                     *
+                     */
+                })
+                .waitSeconds(1)
+                .lineToSplineHeading(new Pose2d(-24, -12, Math.toRadians(180)))
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                    /*
+                     * lift up (during traj)
+                     * turret 90 degrees
+                     * drop cone
+                     * lift down (during traj)
+                     */
+                })
+                .waitSeconds(1)
 
                 // third cycle
-                .lineToSplineHeading(new Pose2d(-58 + 9.5, -12, Math.PI))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*pick up cone*/})
-                .waitSeconds(0.5)
-                .lineToSplineHeading(new Pose2d(-35, -12, Math.toRadians(50)))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*drop cone*/})
-                .waitSeconds(0.5)
+                .lineToSplineHeading(new Pose2d(-48.5, -12, Math.toRadians(180)))
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                    /*
+                     * move turret
+                     * pick up cone
+                     *
+                     */
+                })
+                .waitSeconds(1)
+                .lineToSplineHeading(new Pose2d(-24, -12, Math.toRadians(180)))
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                    /*
+                     * lift up (during traj)
+                     * turret 90 degrees
+                     * drop cone
+                     * lift down (during traj)
+                     */
+                })
+                .waitSeconds(1)
 
                 // park
-                .lineToSplineHeading(new Pose2d(-58, -11, 0))
-                .build();
-
-        TrajectorySequence middleTraj = drive.trajectorySequenceBuilder(startPose)
-                // preload cone
-                .lineToConstantHeading(new Vector2d(-35, -4))
-                .strafeLeft(-11)
-                .turn(Math.toRadians(45))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*drop cone*/})
-                .waitSeconds(0.5)
-
-                // first cycle
-                .splineTo(new Vector2d(-58 + 9.5, -12), Math.PI)
-                .UNSTABLE_addTemporalMarkerOffset(2, () -> {/*pick up cone*/})
-                .waitSeconds(0.4)
-                .lineToSplineHeading(new Pose2d(-35, -12, Math.toRadians(50)))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*drop cone*/})
-                .waitSeconds(0.5)
-
-                // second cycle
-                .lineToSplineHeading(new Pose2d(-58 + 9.5, -12, Math.PI))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*pick up cone*/})
-                .waitSeconds(0.5)
-                .lineToSplineHeading(new Pose2d(-35, -12, Math.toRadians(50)))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*drop cone*/})
-                .waitSeconds(0.5)
-
-                // third cycle
-                .lineToSplineHeading(new Pose2d(-58 + 9.5, -12, Math.PI))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*pick up cone*/})
-                .waitSeconds(0.5)
-                .lineToSplineHeading(new Pose2d(-35, -12, Math.toRadians(50)))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*drop cone*/})
-                .waitSeconds(0.5)
-
-                // park
-                .lineToSplineHeading(new Pose2d(-36, -12, 0))
-                .build();
-
-        TrajectorySequence rightTraj = drive.trajectorySequenceBuilder(startPose)
-                // preload cone
-                .lineToConstantHeading(new Vector2d(-35, -4))
-                .strafeLeft(-11)
-                .turn(Math.toRadians(45))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*drop cone*/})
-                .waitSeconds(0.5)
-
-                // first cycle
-                .splineTo(new Vector2d(-58 + 9.5, -12), Math.PI)
-                .UNSTABLE_addTemporalMarkerOffset(2, () -> {/*pick up cone*/})
-                .waitSeconds(0.4)
-                .lineToSplineHeading(new Pose2d(-35, -12, Math.toRadians(50)))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*drop cone*/})
-                .waitSeconds(0.5)
-
-                // second cycle
-                .lineToSplineHeading(new Pose2d(-58 + 9.5, -12, Math.PI))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*pick up cone*/})
-                .waitSeconds(0.5)
-                .lineToSplineHeading(new Pose2d(-35, -12, Math.toRadians(50)))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*drop cone*/})
-                .waitSeconds(0.5)
-
-                // third cycle
-                .lineToSplineHeading(new Pose2d(-58 + 9.5, -12, Math.PI))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {
-                    /*pick up cone*/})
-                .waitSeconds(0.5)
-                .lineToSplineHeading(new Pose2d(-35, -12, Math.toRadians(50)))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*drop cone*/})
-                .waitSeconds(0.5)
-
-                // park
-                .lineToSplineHeading(new Pose2d(-12, -11, Math.toRadians(90)))
+                .lineToSplineHeading((finalVectorPark))
                 .build();
 
         waitForStart();
@@ -167,11 +158,9 @@ public class autoRedLeftTest extends LinearOpMode {
         if (!isStopRequested())
             drive.followTrajectorySequence(leftTraj);
 
-            //drive.followTrajectorySequence(middleTraj);
-            //drive.followTrajectorySequence(rightTraj);
-
 
 
 
     }
+
 }
