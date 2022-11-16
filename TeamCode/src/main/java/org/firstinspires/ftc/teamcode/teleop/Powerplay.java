@@ -33,20 +33,17 @@ public class Powerplay extends LinearOpMode {
         // Other
         DcMotor motorLift = hardwareMap.get(DcMotor.class, "leftLift");
         DcMotor motorLift2 = hardwareMap.get(DcMotor.class, "rightLift");
-        DcMotor motorTurret = hardwareMap.get(DcMotor.class, "motorTurret");
         Servo servoSlider = hardwareMap.get(Servo.class, "servoTurret");
         Servo servoScissor = hardwareMap.get(Servo.class, "servoScissor");
         Servo servoScissorLift = hardwareMap.get(Servo.class, "servoScissorLift");
         TouchSensor tSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
-        DistanceSensor dSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
         TouchSensor liftSensorRight = hardwareMap.get(TouchSensor.class, "liftSensorRight");
         TouchSensor liftSensorLeft = hardwareMap.get(TouchSensor.class, "liftSensorLeft");
 
-        // set motorTurret to encoder mode
-        motorTurret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorLift2.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // create scissorintake object
-        ScissorIntake intake = new ScissorIntake(servoScissorLift, servoScissor, tSensor, dSensor);
+        ScissorIntake intake = new ScissorIntake(servoScissorLift, servoScissor, tSensor);
 
         double sliderPos;
         double MIN_POSITION = 0, MAX_POSITION = 1;
@@ -88,42 +85,22 @@ public class Powerplay extends LinearOpMode {
 
 
             // lift
-
-            if (gamepad2.left_stick_y > 0) {
-                motorLift.setPower(gamepad2.left_stick_y);
-                motorLift2.setPower(-gamepad2.left_stick_y);
-            }
-
-            if(gamepad2.left_stick_y < 0) {
-                motorLift.setPower(gamepad2.left_stick_y);
-                motorLift2.setPower(-gamepad2.left_stick_y);
-
-                if (tSensor.isPressed()) {
-
-                }
-            }
-
-
-
-
-            // turret
-            if (gamepad2.left_bumper) {
-                motorTurret.setPower(-0.5);
-            }
-            if (gamepad2.right_bumper) {
-                motorTurret.setPower(0.5);
-            }
-            else {
-                motorTurret.setPower(0);
-            }
+            motorLift.setPower(gamepad2.left_stick_y);
+            motorLift2.setPower(gamepad2.left_stick_y);
 
 
             // intake
             if (gamepad2.a) {
                 intake.releaseCone();
             }
+            if (gamepad2.b) {
+                intake.contractScissor();
+            }
             if (gamepad2.x) {
-                intake.autoPickUpCone();
+                intake.moveScissorToBottom();
+            }
+            if (gamepad2.y) {
+                intake.moveScissorToTop();
             }
 
 
@@ -133,7 +110,7 @@ public class Powerplay extends LinearOpMode {
                 sliderPos += gamepad2.right_stick_y;
             }
 
-            if (gamepad2.dpad_up) {
+            /*if (gamepad2.dpad_up) {
                 liftPreset++;
 
                 if (liftPreset > 3) {
@@ -157,6 +134,7 @@ public class Powerplay extends LinearOpMode {
 
 
 
+
             if (liftPreset == 0) {
                 motorLift2.setTargetPosition(GROUND);
                 motorLift.setTargetPosition(GROUND);
@@ -172,16 +150,14 @@ public class Powerplay extends LinearOpMode {
             }
 
 
-
-
             motorLift2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            */
 
             servoSlider.setPosition(Range.clip(sliderPos, MIN_POSITION, MAX_POSITION));
 
 
             telemetry.addData("Motor Lift Power:", motorLift.getPower());
-            telemetry.addData("Motor Turret Power:", motorTurret.getPower());
             telemetry.addData("Horizontal Slider Position:", servoSlider.getPosition());
 
 
