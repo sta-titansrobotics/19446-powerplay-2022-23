@@ -39,6 +39,8 @@ public class Powerplay extends LinearOpMode {
         Servo servoScissorLift = hardwareMap.get(Servo.class, "servoScissorLift");
         TouchSensor tSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
         DistanceSensor dSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
+        TouchSensor liftSensorRight = hardwareMap.get(TouchSensor.class, "liftSensorRight");
+        TouchSensor liftSensorLeft = hardwareMap.get(TouchSensor.class, "liftSensorLeft");
 
         // set motorTurret to encoder mode
         motorTurret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -86,8 +88,22 @@ public class Powerplay extends LinearOpMode {
 
 
             // lift
-            motorLift.setPower(gamepad2.left_stick_y);
-            motorLift2.setPower(-gamepad2.left_stick_y);
+
+            if (gamepad2.left_stick_y > 0) {
+                motorLift.setPower(gamepad2.left_stick_y);
+                motorLift2.setPower(-gamepad2.left_stick_y);
+            }
+
+            if(gamepad2.left_stick_y < 0) {
+                motorLift.setPower(gamepad2.left_stick_y);
+                motorLift2.setPower(-gamepad2.left_stick_y);
+
+                if (tSensor.isPressed()) {
+
+                }
+            }
+
+
 
 
             // turret
@@ -139,6 +155,8 @@ public class Powerplay extends LinearOpMode {
                 liftPreset = 1;
             }
 
+
+
             if (liftPreset == 0) {
                 motorLift2.setTargetPosition(GROUND);
                 motorLift.setTargetPosition(GROUND);
@@ -152,6 +170,9 @@ public class Powerplay extends LinearOpMode {
                 motorLift2.setTargetPosition(HIGH);
                 motorLift.setTargetPosition(HIGH);
             }
+
+
+
 
             motorLift2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
