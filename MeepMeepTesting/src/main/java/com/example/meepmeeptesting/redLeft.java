@@ -10,18 +10,18 @@ public class redLeft {
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(800);
 
-        int parkNum = 3;
+        int parkNum = 1;
         Pose2d vectorPark = new Pose2d(0, 0);
 
         switch (parkNum) {
             case 1:
-                vectorPark = new Pose2d(-58, -11, 0);
+                vectorPark = new Pose2d(-58, -12, Math.toRadians(180));
                 break;
             case 2:
-                vectorPark = new Pose2d(-36, -12, 0);
+                vectorPark = new Pose2d(-36, -12, Math.toRadians(180));
                 break;
             case 3:
-                vectorPark = new Pose2d(-12, -11, Math.toRadians(90));
+                vectorPark = new Pose2d(-12, -12, Math.toRadians(180));
                 break;
 
         }
@@ -33,38 +33,39 @@ public class redLeft {
                 .setConstraints(26.01, 30, 2.1322221755981445, Math.toRadians(180), 14.65)
                 .setDimensions(16, 17)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(-35.5, -62, Math.toRadians(0)))
+                        drive.trajectorySequenceBuilder(new Pose2d(-35.5, -61.5, Math.toRadians(90)))
 
                                 // preload cone
-                                .lineToConstantHeading(new Vector2d(-35, 0))
-                                .strafeLeft(-11)
-                                .turn(Math.toRadians(45))
+                                .lineToSplineHeading(new Pose2d(-11.5, -61.5, Math.toRadians(90)))
+                                .lineToSplineHeading(new Pose2d(-11.6, -11.5, Math.toRadians(90)))
+                                .turn(Math.toRadians(42))
                                 .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*drop cone*/})
-                                .waitSeconds(0.5)
+                                .waitSeconds(1)
+                                .turn(Math.toRadians(48))
 
                                 // first cycle
-                                .splineTo(new Vector2d(-58 + 9.5, -12), Math.PI)
+                                .lineToSplineHeading(new Pose2d(-48.5, -12, Math.toRadians(180)))
                                 .UNSTABLE_addTemporalMarkerOffset(2, () -> {/*pick up cone*/})
-                                .waitSeconds(0.4)
-                                .lineToSplineHeading(new Pose2d(-35, -1, Math.toRadians(50)))
+                                .waitSeconds(1)
+                                .lineToSplineHeading(new Pose2d(-24, -12, Math.toRadians(180)))
                                 .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*drop cone*/})
-                                .waitSeconds(0.5)
-
+                                .waitSeconds(1)
+                                
                                 // second cycle
-                                .lineToSplineHeading(new Pose2d(-58 + 9.5, -12, Math.PI))
-                                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*pick up cone*/})
-                                .waitSeconds(0.5)
-                                .lineToSplineHeading(new Pose2d(-35, -12, Math.toRadians(50)))
+                                .lineToSplineHeading(new Pose2d(-48.5, -12, Math.toRadians(180)))
+                                .UNSTABLE_addTemporalMarkerOffset(2, () -> {/*pick up cone*/})
+                                .waitSeconds(1)
+                                .lineToSplineHeading(new Pose2d(-24, -12, Math.toRadians(180)))
                                 .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*drop cone*/})
-                                .waitSeconds(0.5)
+                                .waitSeconds(1)
 
                                 // third cycle
-                                .lineToSplineHeading(new Pose2d(-58 + 9.5, -12, Math.PI))
-                                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*pick up cone*/})
-                                .waitSeconds(0.5)
-                                .lineToSplineHeading(new Pose2d(-35, -12, Math.toRadians(50)))
+                                .lineToSplineHeading(new Pose2d(-48.5, -12, Math.toRadians(180)))
+                                .UNSTABLE_addTemporalMarkerOffset(2, () -> {/*pick up cone*/})
+                                .waitSeconds(1)
+                                .lineToSplineHeading(new Pose2d(-24, -12, Math.toRadians(180)))
                                 .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*drop cone*/})
-                                .waitSeconds(0.5)
+                                .waitSeconds(1)
 
                                 // park
                                 .lineToSplineHeading((finalVectorPark))
