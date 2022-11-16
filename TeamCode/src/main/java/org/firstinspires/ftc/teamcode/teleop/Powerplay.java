@@ -48,6 +48,11 @@ public class Powerplay extends LinearOpMode {
 
         double sliderPos;
         double MIN_POSITION = 0, MAX_POSITION = 1;
+        int liftPreset = 0;
+        int GROUND = 0;
+        int LOW = 0;
+        int MIDDLE = 0;
+        int HIGH = 0;
 
         waitForStart();
 
@@ -112,6 +117,44 @@ public class Powerplay extends LinearOpMode {
                 sliderPos += gamepad2.right_stick_y;
             }
 
+            if (gamepad2.dpad_up) {
+                liftPreset++;
+
+                if (liftPreset > 3) {
+                    liftPreset = 0;
+                }
+
+            }
+
+            if (gamepad2.dpad_down) {
+                liftPreset--;
+
+                if (liftPreset < 0) {
+                    liftPreset = 3;
+                }
+
+            }
+
+            if(gamepad2.b) {
+                liftPreset = 1;
+            }
+
+            if (liftPreset == 0) {
+                motorLift2.setTargetPosition(GROUND);
+                motorLift.setTargetPosition(GROUND);
+            } else if(liftPreset == 1) {
+                motorLift2.setTargetPosition(LOW);
+                motorLift.setTargetPosition(LOW);
+            } else if (liftPreset == 2) {
+                motorLift2.setTargetPosition(MIDDLE);
+                motorLift.setTargetPosition(MIDDLE);
+            } else if(liftPreset == 3) {
+                motorLift2.setTargetPosition(HIGH);
+                motorLift.setTargetPosition(HIGH);
+            }
+
+            motorLift2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             servoSlider.setPosition(Range.clip(sliderPos, MIN_POSITION, MAX_POSITION));
 
