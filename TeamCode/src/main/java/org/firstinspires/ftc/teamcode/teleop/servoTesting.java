@@ -34,23 +34,20 @@ public class servoTesting extends LinearOpMode {
         leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        Servo horizontalServo = hardwareMap.get(Servo.class, "servoTurret");
         Servo servoScissor = hardwareMap.get(Servo.class, "servoScissor");
         Servo verticalServo = hardwareMap.get(Servo.class, "servoScissorLift");
         TouchSensor liftSensorRight = hardwareMap.get(TouchSensor.class, "liftSensorRight");
         TouchSensor liftSensorLeft = hardwareMap.get(TouchSensor.class, "liftSensorLeft");
-        
 
         // Reverse right lift motor
         rightLift.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        double sliderPos, verticalServoPos, scissorPos;
+        double verticalServoPos, scissorPos;
         double MIN_POSITION = 0, MAX_POSITION = 1;
 
         waitForStart();
 
-        // reset slider pos
-        sliderPos = 0.5;
+        // set initial positions
         verticalServoPos = 0.5;
         scissorPos = 0.5;
 
@@ -101,22 +98,13 @@ public class servoTesting extends LinearOpMode {
                 rightLift.setPower(0);
             }
 
-            // horizontal slider (rp)
-            if (gamepad2.right_stick_y < 0 && sliderPos < MAX_POSITION) {
-                sliderPos += 0.01;
-            }
-
-            if (gamepad2.right_stick_y > 0 && sliderPos > MIN_POSITION) {
-                sliderPos -= 0.01;
-            }
-
             // vertical slider
-            if (gamepad2.right_stick_x > 0) {
+            if (gamepad2.right_stick_y < 0 && verticalServoPos < MAX_POSITION) {
                 verticalServoPos += 0.1;
             }
 
-            if (gamepad2.right_stick_x < 0) {
-                verticalServoPos += 0.1;
+            if (gamepad2.right_stick_y > 0 && verticalServoPos > MIN_POSITION) {
+                verticalServoPos -= 0.1;
             }
 
             // scissor intake
@@ -129,14 +117,12 @@ public class servoTesting extends LinearOpMode {
 
 
             // set positions to servos
-            horizontalServo.setPosition(Range.clip(sliderPos, MIN_POSITION, MAX_POSITION));
             verticalServo.setPosition(Range.clip(verticalServoPos, MIN_POSITION, MAX_POSITION));
             servoScissor.setPosition(Range.clip(scissorPos, MIN_POSITION, MAX_POSITION));
 
             // add telemetry data
             telemetry.addData("Left Lift Encoder: ", leftLift.getCurrentPosition());
             telemetry.addData("Left Lift Encoder: ", leftLift.getCurrentPosition());
-            telemetry.addData("Horizontal Slider Position: ", horizontalServo.getPosition());
             telemetry.addData("Vertical Slider Position: ", verticalServo.getPosition());
             telemetry.addData("Scissor Intake Position: ", servoScissor.getPosition());
 
