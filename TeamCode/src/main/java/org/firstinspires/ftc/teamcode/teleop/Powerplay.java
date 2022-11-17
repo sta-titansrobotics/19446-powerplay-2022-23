@@ -18,8 +18,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class Powerplay extends LinearOpMode {
 
     DcMotor motorFL, motorBL, motorFR, motorBR, leftLift, rightLift;
-    boolean pGA2UP;
-    boolean pGA2DOWN;
+    boolean pGA2UP = false;
+    boolean pGA2DOWN = false;
 
     @Override
     public void runOpMode() {
@@ -40,19 +40,18 @@ public class Powerplay extends LinearOpMode {
         Servo servoScissor = hardwareMap.get(Servo.class, "servoScissor");
         Servo servoScissorLift = hardwareMap.get(Servo.class, "servoScissorLift");
         TouchSensor tSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
-        ColorSensor cSensor = hardwareMap.get(ColorSensor.class, "distanceSensor");
         TouchSensor liftSensorRight = hardwareMap.get(TouchSensor.class, "liftSensorRight");
         TouchSensor liftSensorLeft = hardwareMap.get(TouchSensor.class, "liftSensorLeft");
 
         // create scissorintake object
-        ScissorIntake intake = new ScissorIntake(servoScissorLift, servoScissor, tSensor, cSensor);
+        ScissorIntake intake = new ScissorIntake(servoScissorLift, servoScissor, tSensor);
 
         double MIN_POSITION = 0, MAX_POSITION = 1, MAX_LIFT_POSITION = 100000;
         int liftPreset = 0;
         int GROUND = 0;
-        int LOW = 0;
-        int MIDDLE = 0;
-        int HIGH = 0;
+        int LOW = 1700;
+        int MIDDLE = 2900;
+        int HIGH = 4000;
 
         waitForStart();
 
@@ -121,13 +120,6 @@ public class Powerplay extends LinearOpMode {
                 }
             }
 
-            // intake
-            if (gamepad2.a) {
-                intake.releaseCone();
-            }
-            if (gamepad2.x) {
-                intake.autoPickUpCone();
-            }
 
             // falling edge detectors for click once
             boolean ga2UP = gamepad2.dpad_up;

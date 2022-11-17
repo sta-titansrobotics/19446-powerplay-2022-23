@@ -23,39 +23,20 @@ public class ScissorIntake {
     private final double RP_TOP_POSITION = -1.0;
     private final double RP_BOTTOM_POSITION = 1.0;
     private final double RP_HOME_POSITION = 0.0;
-    private final double REDTHRESHOLD = 10000;
-    private final double BLUETHRESHOLD = 10000;
 
     /**
      * @param rbtRPServo            - rack & pinion servo from robot (vertical)
      * @param rbtScissorServo       - scissor servo from robot
      * @param rbtScissorTouch       - scissor touch sensor from robot
-     * @param rbtConeColorSensor - color sensor for cone detection
      */
-    public ScissorIntake(Servo rbtRPServo, Servo rbtScissorServo, TouchSensor rbtScissorTouch, ColorSensor rbtConeColorSensor) {
+    public ScissorIntake(Servo rbtRPServo, Servo rbtScissorServo, TouchSensor rbtScissorTouch) {
         this.rpServo = rbtRPServo;
         this.scissorServo = rbtScissorServo;
         this.scissorTouch = rbtScissorTouch;
-        this.colorSensor = rbtConeColorSensor;
 
 
     }
 
-    /**
-     * Check if the cone is placed in the bracket
-     *
-     * @return true if the cone distance is less than the determined threshold
-     */
-    public boolean isConeInBracket() {
-        if (colorSensor.red() > REDTHRESHOLD) {
-            return true;
-        } else if (colorSensor.blue() > BLUETHRESHOLD) {
-            return true;
-        } else {
-            return false;
-        }
-
-    }
 
     /**
      * Check if the scissor touch sensor is press
@@ -96,32 +77,6 @@ public class ScissorIntake {
         // maybe add a timeout safety stop here;
     }
 
-    /**
-     * Automated action to pick up the cone
-     *
-     * @return true if the action completes
-     */
-    public boolean autoPickUpCone() {
-        // move to home position
-        if (this.rpServo.getPosition() != this.RP_HOME_POSITION) {
-            this.rpServo.setPosition(this.RP_HOME_POSITION);
-        }
-
-        // move the scissor down until bottom or cone detected in scissor
-        if (isConeInBracket()) {
-            while (this.rpServo.getPosition() > this.RP_BOTTOM_POSITION || !this.isScissorInCone()) {
-                this.rpServo.setPosition(this.rpServo.getPosition() + 0.1);
-            }
-
-            if (this.isScissorInCone()) {
-                this.contractScissor();
-                this.moveScissorToTop();
-                return true;
-            }
-        }
-
-        return false;
-    }
 
     /**
      * bring scissor arms to their position, releasing the cone
