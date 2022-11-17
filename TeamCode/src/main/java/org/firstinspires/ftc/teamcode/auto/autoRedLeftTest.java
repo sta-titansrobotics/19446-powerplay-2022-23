@@ -54,7 +54,7 @@ public class autoRedLeftTest extends LinearOpMode {
                 vectorPark = new Pose2d(-58, -12, Math.toRadians(180));
                 break;
             case 2:
-                vectorPark = new Pose2d(-36, -12, Math.toRadians(180));
+                vectorPark = new Pose2d(-35, -12, Math.toRadians(180));
                 break;
             case 3:
                 vectorPark = new Pose2d(-12, -12, Math.toRadians(180));
@@ -66,7 +66,7 @@ public class autoRedLeftTest extends LinearOpMode {
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        Pose2d startPose = new Pose2d(-35.5, -61.5, Math.toRadians(90));
+        Pose2d startPose = new Pose2d(-35.5, -62.3, Math.toRadians(180));
 
         drive.setPoseEstimate(startPose);
 
