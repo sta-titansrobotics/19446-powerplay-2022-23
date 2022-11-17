@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
 
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
@@ -12,6 +13,7 @@ public class ScissorIntake {
     private Servo rpServo;  // the servo that controls the rack and pinion
     private Servo scissorServo; // servo that controls the scissor mechanism;
     private TouchSensor scissorTouch; // scissor touch sensor
+    private ColorSensor colorSensor; // cone touch sensor
 
 
     private final double CONE_DISTANCE_THRESHOLD_MM = 5;  // in mm, need to figure out this value
@@ -21,16 +23,37 @@ public class ScissorIntake {
     private final double RP_TOP_POSITION = -1.0;
     private final double RP_BOTTOM_POSITION = 1.0;
     private final double RP_HOME_POSITION = 0.0;
+    private final double REDTHRESHOLD = 10000;
+    private final double BLUETHRESHOLD = 10000;
 
     /**
      * @param rbtRPServo            - rack & pinion servo from robot (vertical)
      * @param rbtScissorServo       - scissor servo from robot
      * @param rbtScissorTouch       - scissor touch sensor from robot
+     * @param rbtConeColorSensor - color sensor for cone detection
      */
-    public ScissorIntake(Servo rbtRPServo, Servo rbtScissorServo, TouchSensor rbtScissorTouch) {
+    public ScissorIntake(Servo rbtRPServo, Servo rbtScissorServo, TouchSensor rbtScissorTouch, ColorSensor rbtConeColorSensor) {
         this.rpServo = rbtRPServo;
         this.scissorServo = rbtScissorServo;
         this.scissorTouch = rbtScissorTouch;
+        this.colorSensor = rbtConeColorSensor;
+
+
+    }
+
+    /**
+     * Check if the cone is placed in the bracket
+     *
+     * @return true if the cone distance is less than the determined threshold
+     */
+    public boolean isConeInBracket() {
+        if (colorSensor.red() > REDTHRESHOLD) {
+            return true;
+        } else if (colorSensor.blue() > BLUETHRESHOLD) {
+            return true;
+        } else {
+            return false;
+        }
 
     }
 
@@ -73,13 +96,11 @@ public class ScissorIntake {
         // maybe add a timeout safety stop here;
     }
 
-
     /**
      * Automated action to pick up the cone
      *
      * @return true if the action completes
      */
-    /*
     public boolean autoPickUpCone() {
         // move to home position
         if (this.rpServo.getPosition() != this.RP_HOME_POSITION) {
@@ -87,7 +108,6 @@ public class ScissorIntake {
         }
 
         // move the scissor down until bottom or cone detected in scissor
-
         if (isConeInBracket()) {
             while (this.rpServo.getPosition() > this.RP_BOTTOM_POSITION || !this.isScissorInCone()) {
                 this.rpServo.setPosition(this.rpServo.getPosition() + 0.1);
@@ -102,7 +122,6 @@ public class ScissorIntake {
 
         return false;
     }
-    */
 
     /**
      * bring scissor arms to their position, releasing the cone
@@ -111,3 +130,4 @@ public class ScissorIntake {
         this.scissorServo.setPosition(0);
     }
 }
+
