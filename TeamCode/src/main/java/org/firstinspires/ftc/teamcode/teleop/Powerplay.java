@@ -17,46 +17,46 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 @TeleOp
 public class Powerplay extends LinearOpMode {
 
+    DcMotor motorFL, motorBL, motorFR, motorBR, leftLift, rightLift;
+    boolean pGA2UP = false;
+    boolean pGA2DOWN = false;
 
     @Override
     public void runOpMode() {
 
         // Movement Motors
-        DcMotor motorFL = hardwareMap.get(DcMotor.class, "motorFrontLeft");
-        DcMotor motorBL = hardwareMap.get(DcMotor.class, "motorBackLeft");
-        DcMotor motorFR = hardwareMap.get(DcMotor.class, "motorFrontRight");
-        DcMotor motorBR = hardwareMap.get(DcMotor.class, "motorBackRight");
+        motorFL = hardwareMap.get(DcMotor.class, "motorFrontLeft");
+        motorBL = hardwareMap.get(DcMotor.class, "motorBackLeft");
+        motorFR = hardwareMap.get(DcMotor.class, "motorFrontRight");
+        motorBR = hardwareMap.get(DcMotor.class, "motorBackRight");
 
         //Reverse left side motors
         motorFL.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBL.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Other
-        DcMotor motorLift = hardwareMap.get(DcMotor.class, "leftLift");
-        DcMotor motorLift2 = hardwareMap.get(DcMotor.class, "rightLift");
-        Servo servoSlider = hardwareMap.get(Servo.class, "servoTurret");
+        leftLift = hardwareMap.get(DcMotor.class, "leftLift");
+        rightLift = hardwareMap.get(DcMotor.class, "rightLift");
         Servo servoScissor = hardwareMap.get(Servo.class, "servoScissor");
         Servo servoScissorLift = hardwareMap.get(Servo.class, "servoScissorLift");
         TouchSensor tSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
-        ColorSensor cSensor = hardwareMap.get(ColorSensor.class, "distanceSensor");
         TouchSensor liftSensorRight = hardwareMap.get(TouchSensor.class, "liftSensorRight");
         TouchSensor liftSensorLeft = hardwareMap.get(TouchSensor.class, "liftSensorLeft");
 
         // create scissorintake object
-        ScissorIntake intake = new ScissorIntake(servoScissorLift, servoScissor, tSensor, cSensor);
+        ScissorIntake intake = new ScissorIntake(servoScissorLift, servoScissor, tSensor);
 
-        double sliderPos;
         double MIN_POSITION = 0, MAX_POSITION = 1, MAX_LIFT_POSITION = 100000;
         int liftPreset = 0;
         int GROUND = 0;
-        int LOW = 0;
-        int MIDDLE = 0;
-        int HIGH = 0;
+        int LOW = 1700;
+        int MIDDLE = 2900;
+        int HIGH = 4000;
 
         waitForStart();
 
         // reset slider pos
-        sliderPos = 0.5;
+        double servoScissorPos = 0.5;
         double scissorPos = 0;
 
 
@@ -88,16 +88,16 @@ public class Powerplay extends LinearOpMode {
             // lift
 
             if (gamepad2.left_stick_y > 0) {
-                motorLift.setTargetPosition(motorLift.getTargetPosition() + 100);
-                motorLift2.setPower(motorLift.getTargetPosition() + 100);
+                leftLift.setTargetPosition(leftLift.getTargetPosition() + 100);
+                rightLift.setPower(leftLift.getTargetPosition() + 100);
 
-                motorLift2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                motorLift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                rightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-                if(motorLift.getTargetPosition() == MAX_LIFT_POSITION) {
+                if(leftLift.getTargetPosition() == MAX_LIFT_POSITION) {
                     if (tSensor.isPressed()) {
                         scissorPos -= gamepad2.left_stick_y;
                     }
@@ -106,14 +106,14 @@ public class Powerplay extends LinearOpMode {
             }
 
             if(gamepad2.left_stick_y < 0) {
-                motorLift.setTargetPosition(motorLift.getTargetPosition() + 100);
-                motorLift2.setPower(motorLift.getTargetPosition() + 100);
+                leftLift.setTargetPosition(leftLift.getTargetPosition() + 100);
+                rightLift.setPower(leftLift.getTargetPosition() + 100);
 
-                motorLift2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                motorLift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                rightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
                 if (tSensor.isPressed()) {
                     scissorPos += gamepad2.left_stick_y;
@@ -121,107 +121,98 @@ public class Powerplay extends LinearOpMode {
             }
 
 
-
-
-
-
-
-            // intake
-            if (gamepad2.a) {
-                intake.releaseCone();
-            }
-            if (gamepad2.x) {
-                intake.autoPickUpCone();
-            }
-
-
-
-            // horizontal slider
-            if (sliderPos > MIN_POSITION && sliderPos < MAX_POSITION) {
-                sliderPos += gamepad2.right_stick_y;
-            }
-
-            if (gamepad2.dpad_up) {
-                liftPreset++;
-
-                if (liftPreset > 3) {
-                    liftPreset = 0;
+            // falling edge detectors for click once
+            boolean ga2UP = gamepad2.dpad_up;
+            if (ga2UP && !pGA2UP) {
+                if (liftPreset < 3) {
+                    liftPreset++;
                 }
-
-            }
-
-            if (gamepad2.dpad_down) {
-                liftPreset--;
-
-                if (liftPreset < 0) {
-                    liftPreset = 3;
+                if (liftPreset == 0) {
+                    moveLift(0.5, GROUND);
+                } else if(liftPreset == 1) {
+                    moveLift(0.5, LOW);
+                } else if (liftPreset == 2) {
+                    moveLift(0.5, MIDDLE);
+                } else if(liftPreset == 3) {
+                    moveLift(0.5, HIGH);
                 }
-
             }
+            pGA2UP = ga2UP;
 
-            if(gamepad2.b) {
-                liftPreset = 1;
+            boolean ga2DOWN = gamepad2.dpad_down;
+            if (ga2DOWN && !pGA2DOWN) {
+                if (liftPreset > 0) {
+                    liftPreset--;
+                }
+                if (liftPreset == 0) {
+                    moveLift(0.5, GROUND);
+                } else if(liftPreset == 1) {
+                    moveLift(0.5, LOW);
+                } else if (liftPreset == 2) {
+                    moveLift(0.5, MIDDLE);
+                } else if(liftPreset == 3) {
+                    moveLift(0.5, HIGH);
+                }
             }
+            pGA2DOWN = ga2DOWN;
 
 
 
-            if (liftPreset == 0) {
-                motorLift2.setTargetPosition(GROUND);
-                motorLift.setTargetPosition(GROUND);
-
-                motorLift2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                motorLift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-            } else if(liftPreset == 1) {
-                motorLift2.setTargetPosition(LOW);
-                motorLift.setTargetPosition(LOW);
-
-                motorLift2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                motorLift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-
-            } else if (liftPreset == 2) {
-                motorLift2.setTargetPosition(MIDDLE);
-                motorLift.setTargetPosition(MIDDLE);
-                motorLift2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                motorLift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-            } else if(liftPreset == 3) {
-                motorLift2.setTargetPosition(HIGH);
-                motorLift.setTargetPosition(HIGH);
-                motorLift2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                motorLift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-            }
-
-
-
-            servoSlider.setPosition(Range.clip(sliderPos, MIN_POSITION, MAX_POSITION));
+            servoScissorLift.setPosition(Range.clip(servoScissorPos, MIN_POSITION, MAX_POSITION));
             servoScissor.setPosition(Range.clip(scissorPos, MIN_POSITION, MAX_POSITION));
 
 
-            telemetry.addData("Motor Lift Power:", motorLift.getPower());
-            telemetry.addData("Horizontal Slider Position:", servoSlider.getPosition());
-
-
+            telemetry.addData("Motor Lift Power:", leftLift.getPower());
+            telemetry.addData("Horizontal Slider Position:", servoScissorLift.getPosition());
             telemetry.update();
 
         }
 
+
     }
 
+    /**
+     * Powers lift to target position
+     * @param power desired power
+     * @param ticks target position
+     */
+    public void moveLift(double power, int ticks) {
+        leftLift.setTargetPosition(ticks);
+        rightLift.setTargetPosition(ticks);
+
+        setLiftMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        motorPower(power);
+
+        while(leftLift.isBusy() && rightLift.isBusy()) {
+
+            telemetry.addData("encoder-left-lift", leftLift.getCurrentPosition() + " busy= " + leftLift.isBusy());
+            telemetry.addData("encoder-right-lift", rightLift.getCurrentPosition() + " busy= " + rightLift.isBusy());
+            telemetry.update();
+        }
+
+        motorPower(0);
+
+        setLiftMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    /**
+     * Set power of both lift motors
+     * @param power setPower
+     */
+    public void motorPower(double power) {
+        leftLift.setPower(power);
+        rightLift.setPower(power);
+    }
+
+    /**
+     * Change mode of cascading lift
+     * @param mode setMode
+     */
+    public void setLiftMode(DcMotor.RunMode mode) {
+        leftLift.setMode(mode);
+        rightLift.setMode(mode);
+    }
 
 
 

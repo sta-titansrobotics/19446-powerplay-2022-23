@@ -54,7 +54,7 @@ public class autoRedLeftTest extends LinearOpMode {
                 vectorPark = new Pose2d(-58, -12, Math.toRadians(180));
                 break;
             case 2:
-                vectorPark = new Pose2d(-36, -12, Math.toRadians(180));
+                vectorPark = new Pose2d(-35, -12, Math.toRadians(180));
                 break;
             case 3:
                 vectorPark = new Pose2d(-12, -12, Math.toRadians(180));
@@ -66,88 +66,40 @@ public class autoRedLeftTest extends LinearOpMode {
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        Pose2d startPose = new Pose2d(-35.5, -61.5, Math.toRadians(90));
+        Pose2d startPose = new Pose2d(-35.5, -62.3, Math.toRadians(180));
 
         drive.setPoseEstimate(startPose);
 
         TrajectorySequence leftTraj = drive.trajectorySequenceBuilder(startPose)
                 // preload cone
-                .lineToSplineHeading(new Pose2d(-11.5, -61.5, Math.toRadians(90)))
-                .lineToSplineHeading(new Pose2d(-11.6, -11.5, Math.toRadians(90)))
-                .turn(Math.toRadians(42))
+                .lineToSplineHeading(new Pose2d(-11.5, -62.3, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(-11.5, -11.5, Math.toRadians(180)))
+                .turn(Math.toRadians(-45))
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    /*
-                     * lift up
-                     * move turret
-                     * drop cone
-                     * lift down
-                     */
+                    /* drop cone*/
                 })
                 .waitSeconds(1)
-                .turn(Math.toRadians(48))
+                .turn(Math.toRadians(45))
 
                 // first cycle
-                .lineToSplineHeading(new Pose2d(-48.5, -12, Math.toRadians(180)))
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    /*
-                     * move turret
-                     * pick up cone
-                     *
-                     */
-                })
+                .lineToSplineHeading(new Pose2d(-48.5, -11, Math.toRadians(180)))
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> {/*pick up cone*/})
                 .waitSeconds(1)
-                .lineToSplineHeading(new Pose2d(-24, -12, Math.toRadians(180)))
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    /*
-                     * lift up (during traj)
-                     * turret 90 degrees
-                     * drop cone
-                     * lift down (during traj)
-                     */
-                })
+                .lineToSplineHeading(new Pose2d(-35, -11, Math.toRadians(180)))
+                .turn(Math.toRadians(-135))
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> {/*drop cone*/})
                 .waitSeconds(1)
+                .turn(Math.toRadians(135))
 
                 // second cycle
-                .lineToSplineHeading(new Pose2d(-48.5, -12, Math.toRadians(180)))
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    /*
-                     * move turret
-                     * pick up cone
-                     *
-                     */
-                })
+                .lineToSplineHeading(new Pose2d(-48.5, -11, Math.toRadians(180)))
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> {/*pick up cone*/})
                 .waitSeconds(1)
-                .lineToSplineHeading(new Pose2d(-24, -12, Math.toRadians(180)))
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    /*
-                     * lift up (during traj)
-                     * turret 90 degrees
-                     * drop cone
-                     * lift down (during traj)
-                     */
-                })
+                .lineToSplineHeading(new Pose2d(-35, -11, Math.toRadians(180)))
+                .turn(Math.toRadians(-135))
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> {/*drop cone*/})
                 .waitSeconds(1)
-
-                // third cycle
-                .lineToSplineHeading(new Pose2d(-48.5, -12, Math.toRadians(180)))
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    /*
-                     * move turret
-                     * pick up cone
-                     *
-                     */
-                })
-                .waitSeconds(1)
-                .lineToSplineHeading(new Pose2d(-24, -12, Math.toRadians(180)))
-                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    /*
-                     * lift up (during traj)
-                     * turret 90 degrees
-                     * drop cone
-                     * lift down (during traj)
-                     */
-                })
-                .waitSeconds(1)
+                .turn(Math.toRadians(135))
 
                 // park
                 .lineToSplineHeading((finalVectorPark))
