@@ -137,7 +137,7 @@ public class servoTesting extends LinearOpMode {
             telemetry.addData("Left Lift Encoder: ", leftLift.getCurrentPosition());
             telemetry.addData("Left Lift Encoder: ", leftLift.getCurrentPosition());
             telemetry.addData("Horizontal Slider Position: ", horizontalServo.getPosition());
-            telemetry.addData("Vertical Slider Position: ", + verticalServo.getPosition());
+            telemetry.addData("Vertical Slider Position: ", verticalServo.getPosition());
             telemetry.addData("Scissor Intake Position: ", servoScissor.getPosition());
 
             telemetry.update();
