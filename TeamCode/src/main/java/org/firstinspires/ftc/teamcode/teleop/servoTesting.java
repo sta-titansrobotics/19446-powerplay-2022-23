@@ -88,17 +88,16 @@ public class servoTesting extends LinearOpMode {
 
             // lift
             if (gamepad2.left_stick_y < 0) {
-
-                    leftLift.setPower(0.9);
-                    rightLift.setPower(0.9);
+                    leftLift.setPower(gamepad2.left_stick_y * 0.8);
+                    rightLift.setPower(gamepad2.left_stick_y * 0.8);
 
             } else if (gamepad2.left_stick_y > 0) {
 
                 if (leftLift.getCurrentPosition() > 0 || !liftSensorLeft.isPressed()) {
-                    leftLift.setPower(-0.25);
+                    leftLift.setPower(gamepad2.left_stick_y * 0.4);
                 }
                 if (rightLift.getCurrentPosition() > 0 || !liftSensorRight.isPressed()) {
-                    rightLift.setPower(-0.25);
+                    rightLift.setPower(gamepad2.left_stick_y * 0.4);
                 }
             } else {
                 leftLift.setPower(0);
@@ -136,8 +135,8 @@ public class servoTesting extends LinearOpMode {
 
 
             // set positions to servos
-            verticalServo.setPosition(Range.clip(verticalServoPos, MIN_POSITION, MAX_POSITION));
-            servoScissor.setPosition(Range.clip(scissorPos, MIN_POSITION, MAX_POSITION));
+            verticalServo.setPosition(rangeclip(verticalServoPos, MIN_POSITION, MAX_POSITION));
+            servoScissor.setPosition(scissorPos);
 
             // add telemetry data
             telemetry.addData("Left Lift Power: ", leftLift.getPower());
@@ -155,6 +154,16 @@ public class servoTesting extends LinearOpMode {
 
         }
 
+    }
+
+    private double rangeclip(double number, double min, double max) {
+        if(number > max) {
+            return max;
+        } else if (number < min) {
+            return min;
+        } else {
+            return number;
+        }
     }
 
 

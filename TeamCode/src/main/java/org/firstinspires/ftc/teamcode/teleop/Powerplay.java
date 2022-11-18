@@ -46,7 +46,7 @@ public class Powerplay extends LinearOpMode {
         // create scissorintake object
         ScissorIntake intake = new ScissorIntake(servoScissorLift, servoScissor, tSensor);
 
-        double MIN_POSITION = 0, MAX_POSITION = 1, MAX_LIFT_POSITION = 100000;
+        double MIN_POSITION = 0, MAX_POSITION = 1;
         int liftPreset = 0;
         int GROUND = 0;
         int LOW = 1700;
@@ -87,46 +87,46 @@ public class Powerplay extends LinearOpMode {
 
             // lift
 
-            if (gamepad2.left_stick_y > 0) {
-                leftLift.setTargetPosition(leftLift.getTargetPosition() + 100);
-                rightLift.setPower(leftLift.getTargetPosition() + 100);
+            if (gamepad2.left_stick_y < 0) {
+                leftLift.setPower(gamepad2.left_stick_y * 0.8);
+                rightLift.setPower(gamepad2.left_stick_y * 0.8);
 
-                rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                servoScissorPos += 0.1;
+                servoScissorPos = rangeclip(servoScissorPos, MIN_POSITION, MAX_POSITION);
 
-                rightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            } else if (gamepad2.left_stick_y > 0) {
 
-                if(leftLift.getTargetPosition() == MAX_LIFT_POSITION) {
-                    if (tSensor.isPressed()) {
-                        scissorPos -= gamepad2.left_stick_y;
-                    }
+                if (leftLift.getCurrentPosition() > 0 || !liftSensorLeft.isPressed()) {
+                    leftLift.setPower(gamepad2.left_stick_y * 0.4);
+                }
+                if (rightLift.getCurrentPosition() > 0 || !liftSensorRight.isPressed()) {
+                    rightLift.setPower(gamepad2.left_stick_y * 0.4);
                 }
 
-            }
-
-            if(gamepad2.left_stick_y < 0) {
-                leftLift.setTargetPosition(leftLift.getTargetPosition() + 100);
-                rightLift.setPower(leftLift.getTargetPosition() + 100);
-
-                rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                rightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-                if (tSensor.isPressed()) {
-                    scissorPos += gamepad2.left_stick_y;
-                }
+                scissorPos -= 0.1;
+                scissorPos = rangeclip(scissorPos, MIN_POSITION, MAX_POSITION);
+            } else {
+                leftLift.setPower(0);
+                rightLift.setPower(0);
             }
 
 
             // falling edge detectors for click once
             boolean ga2UP = gamepad2.dpad_up;
-            if (ga2UP && !pGA2UP) {
-                if (liftPreset < 3) {
+            boolean ga2DOWN = gamepad2.dpad_down;
+            if (ga2UP && !pGA2UP || ga2DOWN && !pGA2DOWN) {
+                if (ga2UP) {
                     liftPreset++;
+                    if (liftPreset >  3) {
+                        liftPreset = 0;
+                    }
+                } else if (ga2DOWN) {
+                    liftPreset--;
+                    if (liftPreset <  0) {
+                        liftPreset = 3;
+                    }
                 }
+
                 if (liftPreset == 0) {
                     moveLift(0.5, GROUND);
                 } else if(liftPreset == 1) {
@@ -138,28 +138,12 @@ public class Powerplay extends LinearOpMode {
                 }
             }
             pGA2UP = ga2UP;
-
-            boolean ga2DOWN = gamepad2.dpad_down;
-            if (ga2DOWN && !pGA2DOWN) {
-                if (liftPreset > 0) {
-                    liftPreset--;
-                }
-                if (liftPreset == 0) {
-                    moveLift(0.5, GROUND);
-                } else if(liftPreset == 1) {
-                    moveLift(0.5, LOW);
-                } else if (liftPreset == 2) {
-                    moveLift(0.5, MIDDLE);
-                } else if(liftPreset == 3) {
-                    moveLift(0.5, HIGH);
-                }
-            }
             pGA2DOWN = ga2DOWN;
 
 
 
-            servoScissorLift.setPosition(Range.clip(servoScissorPos, MIN_POSITION, MAX_POSITION));
-            servoScissor.setPosition(Range.clip(scissorPos, MIN_POSITION, MAX_POSITION));
+            servoScissorLift.setPosition(servoScissorPos);
+            servoScissor.setPosition(scissorPos);
 
 
             telemetry.addData("Motor Lift Power:", leftLift.getPower());
@@ -214,6 +198,23 @@ public class Powerplay extends LinearOpMode {
         rightLift.setMode(mode);
     }
 
+    /**
+     * Clip range of mini rp
+     * @param number
+     * @param min
+     * @param max
+     * @return
+     */
+
+    private double rangeclip(double number, double min, double max) {
+        if(number > max) {
+            return max;
+        } else if (number < min) {
+            return min;
+        } else {
+            return number;
+        }
+    }
 
 
 }

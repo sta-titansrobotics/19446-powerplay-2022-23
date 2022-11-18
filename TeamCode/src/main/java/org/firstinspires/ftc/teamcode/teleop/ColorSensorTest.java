@@ -19,9 +19,11 @@ public class ColorSensorTest extends LinearOpMode {
 
 
 
-        ColorSensor cSensor = hardwareMap.get(ColorSensor.class, "distanceSensor");
+        ColorSensor cSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
 
 
+
+        waitForStart();
 
         if (isStopRequested()) return;
 
@@ -29,9 +31,7 @@ public class ColorSensorTest extends LinearOpMode {
 
 
 
-
-
-            telemetry.addData("Amount of Red:", cSensor.red());
+            telemetry.addData("Amount of Red:", cSensor.argb());
 
             telemetry.update();
 
