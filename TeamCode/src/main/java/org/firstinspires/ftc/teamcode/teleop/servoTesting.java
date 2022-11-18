@@ -37,6 +37,9 @@ public class servoTesting extends LinearOpMode {
         DcMotor rightLift = hardwareMap.get(DcMotor.class, "rightLift");
 
 
+        leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -86,15 +89,15 @@ public class servoTesting extends LinearOpMode {
             // lift
             if (gamepad2.left_stick_y < 0) {
 
-                    leftLift.setPower(0.8);
-                    rightLift.setPower(0.8);
+                    leftLift.setPower(0.9);
+                    rightLift.setPower(0.9);
 
             } else if (gamepad2.left_stick_y > 0) {
 
-                if (!liftSensorLeft.isPressed()) {
+                if (leftLift.getCurrentPosition() > 0 || !liftSensorLeft.isPressed()) {
                     leftLift.setPower(-0.25);
                 }
-                if (!liftSensorRight.isPressed()) {
+                if (rightLift.getCurrentPosition() > 0 || !liftSensorRight.isPressed()) {
                     rightLift.setPower(-0.25);
                 }
             } else {
@@ -104,13 +107,13 @@ public class servoTesting extends LinearOpMode {
 
             // vertical slider
             boolean ga2UP = gamepad2.dpad_up;
-            if (ga2UP && !pGA2UP) {
+            if (ga2UP && !pGA2UP && verticalServoPos > MIN_POSITION) {
                 verticalServoPos -= 0.1;
             }
             pGA2UP = ga2UP;
 
             boolean ga2DOWN = gamepad2.dpad_down;
-            if (ga2DOWN && !pGA2DOWN) {
+            if (ga2DOWN && !pGA2DOWN && verticalServoPos < MAX_POSITION) {
                 verticalServoPos += 0.1;
             }
             pGA2DOWN = ga2DOWN;
