@@ -13,10 +13,17 @@ import com.qualcomm.robotcore.util.Range;
 @TeleOp
 public class servoTesting extends LinearOpMode {
 
+    DcMotor motorFL, motorBL, motorFR, motorBR, leftLift, rightLift;
+
     boolean pGA2UP = false;
     boolean pGA2DOWN = false;
 
     boolean pGA2Y = false;
+
+    boolean pGA2X = false;
+    boolean pGA2A = false;
+    boolean pGA2B = false;
+
     boolean scissorToggle = false;
 
     @Override
@@ -36,7 +43,7 @@ public class servoTesting extends LinearOpMode {
         DcMotor leftLift = hardwareMap.get(DcMotor.class, "leftLift");
         DcMotor rightLift = hardwareMap.get(DcMotor.class, "rightLift");
 
-
+        // lift motors
         leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -92,14 +99,13 @@ public class servoTesting extends LinearOpMode {
                     leftLift.setPower(-gamepad2.left_stick_y * 0.85);
                     rightLift.setPower(-gamepad2.left_stick_y * 0.85);
 
+
             } else if (gamepad2.left_stick_y > 0) {
 
-                if (leftLift.getCurrentPosition() > 0 || !liftSensorLeft.isPressed()) {
                     leftLift.setPower(-gamepad2.left_stick_y * 0.30);
-                }
-                if (rightLift.getCurrentPosition() > 0 || !liftSensorRight.isPressed()) {
                     rightLift.setPower(-gamepad2.left_stick_y * 0.30);
-                }
+
+
             } else {
                 leftLift.setPower(0);
                 rightLift.setPower(0);
@@ -133,6 +139,10 @@ public class servoTesting extends LinearOpMode {
                 scissorPos = 0.5;
             }
             pGA2Y = ga2Y;
+
+
+
+
 
 
             // set positions to servos

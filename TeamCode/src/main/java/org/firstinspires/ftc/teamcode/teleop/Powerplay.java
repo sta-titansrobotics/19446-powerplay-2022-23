@@ -2,15 +2,11 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.Range;
-
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 //blah blah blah
 
@@ -18,59 +14,72 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class Powerplay extends LinearOpMode {
 
     DcMotor motorFL, motorBL, motorFR, motorBR, leftLift, rightLift;
+
     boolean pGA2UP = false;
     boolean pGA2DOWN = false;
+
+    boolean pGA2Y = false;
+
+    boolean pGA2X = false;
+    boolean pGA2A = false;
+    boolean pGA2B = false;
+
+    boolean scissorToggle = false;
 
     @Override
     public void runOpMode() {
 
         // Movement Motors
-        motorFL = hardwareMap.get(DcMotor.class, "motorFrontLeft");
-        motorBL = hardwareMap.get(DcMotor.class, "motorBackLeft");
-        motorFR = hardwareMap.get(DcMotor.class, "motorFrontRight");
-        motorBR = hardwareMap.get(DcMotor.class, "motorBackRight");
+        DcMotor motorFL = hardwareMap.get(DcMotor.class, "motorFrontLeft");
+        DcMotor motorBL = hardwareMap.get(DcMotor.class, "motorBackLeft");
+        DcMotor motorFR = hardwareMap.get(DcMotor.class, "motorFrontRight");
+        DcMotor motorBR = hardwareMap.get(DcMotor.class, "motorBackRight");
 
         //Reverse left side motors
         motorFL.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBL.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Other
-        leftLift = hardwareMap.get(DcMotor.class, "leftLift");
-        rightLift = hardwareMap.get(DcMotor.class, "rightLift");
+        DcMotor leftLift = hardwareMap.get(DcMotor.class, "leftLift");
+        DcMotor rightLift = hardwareMap.get(DcMotor.class, "rightLift");
+
+        // lift motors
+        leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         Servo servoScissor = hardwareMap.get(Servo.class, "servoScissor");
-        Servo servoScissorLift = hardwareMap.get(Servo.class, "servoScissorLift");
-        TouchSensor tSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
+        Servo verticalServo = hardwareMap.get(Servo.class, "servoScissorLift");
         TouchSensor liftSensorRight = hardwareMap.get(TouchSensor.class, "liftSensorRight");
         TouchSensor liftSensorLeft = hardwareMap.get(TouchSensor.class, "liftSensorLeft");
 
-        // create scissorintake object
-        ScissorIntake intake = new ScissorIntake(servoScissorLift, servoScissor, tSensor);
+        // Reverse right lift motor
+        rightLift.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        double verticalServoPos, scissorPos;
         double MIN_POSITION = 0, MAX_POSITION = 1;
-        int liftPreset = 0;
-        int GROUND = 0;
-        int LOW = 1700;
-        int MIDDLE = 2900;
-        int HIGH = 4000;
 
         waitForStart();
 
-        // reset slider pos
-        double servoScissorPos = 0.5;
-        double scissorPos = 0;
-
+        // set initial positions
+        verticalServoPos = 0.5;
+        scissorPos = 0.5;
 
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
 
-            //Driving
+            // forward, back
             double y = -gamepad1.left_stick_y; // Remember, this is reversed!
 
-            //STRAFING VARIABLE
+            // strafing
             double x = gamepad1.right_stick_x * 1.1; // Counteract imperfect strafing
 
-            //THIS IS THE TURNING VARIABLE
+            // turning
             double rx = gamepad1.left_stick_x;
 
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
@@ -84,137 +93,90 @@ public class Powerplay extends LinearOpMode {
             motorFR.setPower(frontRightPower);
             motorBR.setPower(backRightPower);
 
-
             // lift
-
             if (gamepad2.left_stick_y < 0) {
-                leftLift.setPower(gamepad2.left_stick_y * 0.8);
-                rightLift.setPower(gamepad2.left_stick_y * 0.8);
 
-                servoScissorPos += 0.1;
-                servoScissorPos = rangeclip(servoScissorPos, MIN_POSITION, MAX_POSITION);
+                leftLift.setPower(-gamepad2.left_stick_y * 0.85);
+                rightLift.setPower(-gamepad2.left_stick_y * 0.85);
+
+                if (verticalServoPos > MIN_POSITION) {
+                    verticalServoPos -= 0.01;
+                }
 
             } else if (gamepad2.left_stick_y > 0) {
 
-                if (leftLift.getCurrentPosition() > 0 || !liftSensorLeft.isPressed()) {
-                    leftLift.setPower(gamepad2.left_stick_y * 0.4);
+                if (leftLift.getCurrentPosition() > 0) {
+                    leftLift.setPower(-gamepad2.left_stick_y * 0.30);
                 }
-                if (rightLift.getCurrentPosition() > 0 || !liftSensorRight.isPressed()) {
-                    rightLift.setPower(gamepad2.left_stick_y * 0.4);
+                if (rightLift.getCurrentPosition() > 0) {
+                    rightLift.setPower(-gamepad2.left_stick_y * 0.30);
                 }
 
-                scissorPos -= 0.1;
-                scissorPos = rangeclip(scissorPos, MIN_POSITION, MAX_POSITION);
+                if (verticalServoPos < MAX_POSITION) {
+                    verticalServoPos += 0.01;
+                }
             } else {
                 leftLift.setPower(0);
                 rightLift.setPower(0);
             }
 
-
-            // falling edge detectors for click once
+            // vertical slider
             boolean ga2UP = gamepad2.dpad_up;
-            boolean ga2DOWN = gamepad2.dpad_down;
-            if (ga2UP && !pGA2UP || ga2DOWN && !pGA2DOWN) {
-                if (ga2UP) {
-                    liftPreset++;
-                    if (liftPreset >  3) {
-                        liftPreset = 0;
-                    }
-                } else if (ga2DOWN) {
-                    liftPreset--;
-                    if (liftPreset <  0) {
-                        liftPreset = 3;
-                    }
-                }
-
-                if (liftPreset == 0) {
-                    moveLift(0.5, GROUND);
-                } else if(liftPreset == 1) {
-                    moveLift(0.5, LOW);
-                } else if (liftPreset == 2) {
-                    moveLift(0.5, MIDDLE);
-                } else if(liftPreset == 3) {
-                    moveLift(0.5, HIGH);
-                }
+            if (ga2UP && !pGA2UP && verticalServoPos > MIN_POSITION) {
+                verticalServoPos -= 0.25;
             }
             pGA2UP = ga2UP;
+
+            boolean ga2DOWN = gamepad2.dpad_down;
+            if (ga2DOWN && !pGA2DOWN && verticalServoPos < MAX_POSITION) {
+                verticalServoPos += 0.25;
+            }
             pGA2DOWN = ga2DOWN;
 
+            // scissor intake
+            boolean ga2Y = gamepad2.y;
+            if (ga2Y && !pGA2Y) {
+                scissorToggle = !scissorToggle;
+            }
+
+            // pick up (expand scissor)
+            if (scissorToggle) {
+                scissorPos = 0.67;
+            }
+            // release cone (neutral position)
+            else {
+                scissorPos = 0.5;
+            }
+            pGA2Y = ga2Y;
 
 
-            servoScissorLift.setPosition(servoScissorPos);
-            servoScissor.setPosition(scissorPos);
 
 
-            telemetry.addData("Motor Lift Power:", leftLift.getPower());
-            telemetry.addData("Horizontal Slider Position:", servoScissorLift.getPosition());
+
+
+            // set positions to servos
+            verticalServo.setPosition(Range.clip(verticalServoPos, MIN_POSITION, MAX_POSITION));
+            servoScissor.setPosition(Range.clip(scissorPos, MIN_POSITION, MAX_POSITION));
+
+            // add telemetry data
+            telemetry.addData("Left Lift Power: ", leftLift.getPower());
+            telemetry.addData("Right Lift Power: ", rightLift.getPower());
+            telemetry.addData("Left Lift Encoder: ", leftLift.getCurrentPosition());
+            telemetry.addData("Right Lift Encoder: ", rightLift.getCurrentPosition());
+            telemetry.addData("Vertical Slider Position: ", verticalServo.getPosition());
+            telemetry.addData("Scissor Intake Position: ", servoScissor.getPosition());
+            telemetry.addData("Left Touch Sensor: ", liftSensorLeft.isPressed());
+            telemetry.addData("Right Touch Sensor: ", liftSensorRight.isPressed());
+
+
+
             telemetry.update();
 
         }
 
-
     }
 
-    /**
-     * Powers lift to target position
-     * @param power desired power
-     * @param ticks target position
-     */
-    public void moveLift(double power, int ticks) {
-        leftLift.setTargetPosition(ticks);
-        rightLift.setTargetPosition(ticks);
 
-        setLiftMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        motorPower(power);
-
-        while(leftLift.isBusy() && rightLift.isBusy()) {
-
-            telemetry.addData("encoder-left-lift", leftLift.getCurrentPosition() + " busy= " + leftLift.isBusy());
-            telemetry.addData("encoder-right-lift", rightLift.getCurrentPosition() + " busy= " + rightLift.isBusy());
-            telemetry.update();
-        }
-
-        motorPower(0);
-
-        setLiftMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    }
-
-    /**
-     * Set power of both lift motors
-     * @param power setPower
-     */
-    public void motorPower(double power) {
-        leftLift.setPower(power);
-        rightLift.setPower(power);
-    }
-
-    /**
-     * Change mode of cascading lift
-     * @param mode setMode
-     */
-    public void setLiftMode(DcMotor.RunMode mode) {
-        leftLift.setMode(mode);
-        rightLift.setMode(mode);
-    }
-
-    /**
-     * Clip range of mini rp
-     * @param number
-     * @param min
-     * @param max
-     * @return
-     */
-
-    private double rangeclip(double number, double min, double max) {
-        if(number > max) {
-            return max;
-        } else if (number < min) {
-            return min;
-        } else {
-            return number;
-        }
-    }
 
 
 }
