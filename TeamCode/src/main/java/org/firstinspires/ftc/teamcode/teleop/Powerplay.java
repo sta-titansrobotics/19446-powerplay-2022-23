@@ -108,9 +108,12 @@ public class Powerplay extends LinearOpMode {
                 if (leftLift.getCurrentPosition() > 0) {
                     leftLift.setPower(-gamepad2.left_stick_y * 0.30);
                 }
+
                 if (rightLift.getCurrentPosition() > 0) {
                     rightLift.setPower(-gamepad2.left_stick_y * 0.30);
                 }
+
+
 
                 if (verticalServoPos < MAX_POSITION) {
                     verticalServoPos += 0.01;
@@ -118,6 +121,14 @@ public class Powerplay extends LinearOpMode {
             } else {
                 leftLift.setPower(0);
                 rightLift.setPower(0);
+            }
+
+            if (leftLift.getCurrentPosition() < 0 ) {
+                leftLift.setPower(0.5);
+            }
+
+            if (rightLift.getCurrentPosition() < 0) {
+                rightLift.setPower(0.5);
             }
 
             // vertical slider
