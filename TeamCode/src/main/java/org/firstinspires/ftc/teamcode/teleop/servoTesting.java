@@ -31,6 +31,9 @@ public class servoTesting extends LinearOpMode {
         DcMotor leftLift = hardwareMap.get(DcMotor.class, "leftLift");
         DcMotor rightLift = hardwareMap.get(DcMotor.class, "rightLift");
 
+
+        leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -78,20 +81,16 @@ public class servoTesting extends LinearOpMode {
             // lift
             if (gamepad2.left_stick_y < 0) {
 
-                if (!liftSensorLeft.isPressed()) {
-                    leftLift.setPower(0.80);
-                }
-                if (!liftSensorRight.isPressed()) {
-                    rightLift.setPower(0.80);
-                }
+                    leftLift.setPower(0.8);
+                    rightLift.setPower(0.8);
 
             } else if (gamepad2.left_stick_y > 0) {
 
                 if (!liftSensorLeft.isPressed()) {
-                    leftLift.setPower(-0.5);
+                    leftLift.setPower(-0.25);
                 }
                 if (!liftSensorRight.isPressed()) {
-                    rightLift.setPower(-0.5);
+                    rightLift.setPower(-0.25);
                 }
             } else {
                 leftLift.setPower(0);
@@ -114,6 +113,7 @@ public class servoTesting extends LinearOpMode {
             if (gamepad2.left_stick_x > 0) {
                 scissorPos -= 0.01;
             }
+            //0.5 closed, 0.67 pick up
 
 
             // set positions to servos
@@ -121,10 +121,16 @@ public class servoTesting extends LinearOpMode {
             servoScissor.setPosition(Range.clip(scissorPos, MIN_POSITION, MAX_POSITION));
 
             // add telemetry data
+            telemetry.addData("Left Lift Power: ", leftLift.getPower());
+            telemetry.addData("Right Lift Power: ", rightLift.getPower());
             telemetry.addData("Left Lift Encoder: ", leftLift.getCurrentPosition());
-            telemetry.addData("Left Lift Encoder: ", leftLift.getCurrentPosition());
+            telemetry.addData("Right Lift Encoder: ", rightLift.getCurrentPosition());
             telemetry.addData("Vertical Slider Position: ", verticalServo.getPosition());
             telemetry.addData("Scissor Intake Position: ", servoScissor.getPosition());
+            telemetry.addData("Left Touch Sensor: ", liftSensorLeft.isPressed());
+            telemetry.addData("Right Touch Sensor: ", liftSensorRight.isPressed());
+
+
 
             telemetry.update();
 
