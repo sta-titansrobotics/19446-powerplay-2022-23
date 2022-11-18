@@ -16,7 +16,7 @@ public class servoTesting extends LinearOpMode {
     boolean pGA2UP = false;
     boolean pGA2DOWN = false;
 
-    boolean pGA2A = false;
+    boolean pGA2Y = false;
     boolean scissorToggle = false;
 
     @Override
@@ -89,16 +89,16 @@ public class servoTesting extends LinearOpMode {
             // lift
             if (gamepad2.left_stick_y < 0) {
 
-                    leftLift.setPower(0.9);
-                    rightLift.setPower(0.9);
+                    leftLift.setPower(-gamepad2.left_stick_y * 0.85);
+                    rightLift.setPower(-gamepad2.left_stick_y * 0.85);
 
             } else if (gamepad2.left_stick_y > 0) {
 
                 if (leftLift.getCurrentPosition() > 0 || !liftSensorLeft.isPressed()) {
-                    leftLift.setPower(-0.25);
+                    leftLift.setPower(-gamepad2.left_stick_y * 0.30);
                 }
                 if (rightLift.getCurrentPosition() > 0 || !liftSensorRight.isPressed()) {
-                    rightLift.setPower(-0.25);
+                    rightLift.setPower(-gamepad2.left_stick_y * 0.30);
                 }
             } else {
                 leftLift.setPower(0);
@@ -108,19 +108,19 @@ public class servoTesting extends LinearOpMode {
             // vertical slider
             boolean ga2UP = gamepad2.dpad_up;
             if (ga2UP && !pGA2UP && verticalServoPos > MIN_POSITION) {
-                verticalServoPos -= 0.1;
+                verticalServoPos -= 0.25;
             }
             pGA2UP = ga2UP;
 
             boolean ga2DOWN = gamepad2.dpad_down;
             if (ga2DOWN && !pGA2DOWN && verticalServoPos < MAX_POSITION) {
-                verticalServoPos += 0.1;
+                verticalServoPos += 0.25;
             }
             pGA2DOWN = ga2DOWN;
 
             // scissor intake
-            boolean ga2A = gamepad2.a;
-            if (ga2A && !pGA2A) {
+            boolean ga2Y = gamepad2.y;
+            if (ga2Y && !pGA2Y) {
                 scissorToggle = !scissorToggle;
             }
 
@@ -132,7 +132,7 @@ public class servoTesting extends LinearOpMode {
             else {
                 scissorPos = 0.5;
             }
-            pGA2A = ga2A;
+            pGA2Y = ga2Y;
 
 
             // set positions to servos
