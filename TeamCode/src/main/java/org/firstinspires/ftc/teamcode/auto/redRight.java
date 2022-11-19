@@ -22,27 +22,29 @@
 package org.firstinspires.ftc.teamcode.auto;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-import org.opencv.core.Point;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvInternalCamera;
 
 import java.util.ArrayList;
 
-@Disabled
-public class autoRedLeft extends LinearOpMode {
+@TeleOp
+public class redRight extends LinearOpMode
+{
     //INTRODUCE VARIABLES HERE
 
+    DcMotor leftLift, rightLift;
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
@@ -72,122 +74,6 @@ public class autoRedLeft extends LinearOpMode {
     @Override
     public void runOpMode()
     {
-
-
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-
-        Pose2d startPose = new Pose2d(-35.5, -62, Math.toRadians(0));
-
-        drive.setPoseEstimate(startPose);
-
-        TrajectorySequence leftTraj = drive.trajectorySequenceBuilder(startPose)
-                // preload cone
-                .lineToConstantHeading(new Vector2d(-35, -4))
-                .lineToSplineHeading(new Pose2d(-35.4, -11.1, Math.toRadians(45)))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*drop cone*/})
-                .waitSeconds(0.5)
-
-                // first cycle
-                .splineTo(new Vector2d(-58 + 9.5, -12), Math.PI)
-                .UNSTABLE_addTemporalMarkerOffset(2, () -> {/*pick up cone*/})
-                .waitSeconds(0.4)
-                .lineToSplineHeading(new Pose2d(-35, -12, Math.toRadians(50)))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*drop cone*/})
-                .waitSeconds(0.5)
-
-                // second cycle
-                .lineToSplineHeading(new Pose2d(-58 + 9.5, -12, Math.PI))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*pick up cone*/})
-                .waitSeconds(0.5)
-                .lineToSplineHeading(new Pose2d(-35, -12, Math.toRadians(50)))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*drop cone*/})
-                .waitSeconds(0.5)
-
-                // third cycle
-                .lineToSplineHeading(new Pose2d(-58 + 9.5, -12, Math.PI))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*pick up cone*/})
-                .waitSeconds(0.5)
-                .lineToSplineHeading(new Pose2d(-35, -12, Math.toRadians(50)))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*drop cone*/})
-                .waitSeconds(0.5)
-
-                // park
-                .lineToSplineHeading(new Pose2d(-58, -11, 0))
-                .build();
-
-        TrajectorySequence middleTraj = drive.trajectorySequenceBuilder(startPose)
-                // preload cone
-                .lineToConstantHeading(new Vector2d(-35, -4))
-                .lineToSplineHeading(new Pose2d(-35.4, -11.1, Math.toRadians(45)))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*drop cone*/})
-                .waitSeconds(0.5)
-
-                // first cycle
-                .splineTo(new Vector2d(-58 + 9.5, -12), Math.PI)
-                .UNSTABLE_addTemporalMarkerOffset(2, () -> {/*pick up cone*/})
-                .waitSeconds(0.4)
-                .lineToSplineHeading(new Pose2d(-35, -12, Math.toRadians(50)))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*drop cone*/})
-                .waitSeconds(0.5)
-
-                // second cycle
-                .lineToSplineHeading(new Pose2d(-58 + 9.5, -12, Math.PI))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*pick up cone*/})
-                .waitSeconds(0.5)
-                .lineToSplineHeading(new Pose2d(-35, -12, Math.toRadians(50)))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*drop cone*/})
-                .waitSeconds(0.5)
-
-                // third cycle
-                .lineToSplineHeading(new Pose2d(-58 + 9.5, -12, Math.PI))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*pick up cone*/})
-                .waitSeconds(0.5)
-                .lineToSplineHeading(new Pose2d(-35, -12, Math.toRadians(50)))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*drop cone*/})
-                .waitSeconds(0.5)
-
-                // park
-                .lineToSplineHeading(new Pose2d(-36, -12, 0))
-                .build();
-
-        TrajectorySequence rightTraj = drive.trajectorySequenceBuilder(startPose)
-                // preload cone
-                .lineToConstantHeading(new Vector2d(-35, -4))
-                .lineToSplineHeading(new Pose2d(-35.4, -11.1, Math.toRadians(45)))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*drop cone*/})
-                .waitSeconds(0.5)
-
-                // first cycle
-                .splineTo(new Vector2d(-58 + 9.5, -12), Math.PI)
-                .UNSTABLE_addTemporalMarkerOffset(2, () -> {/*pick up cone*/})
-                .waitSeconds(0.4)
-                .lineToSplineHeading(new Pose2d(-35, -12, Math.toRadians(50)))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*drop cone*/})
-                .waitSeconds(0.5)
-
-                // second cycle
-                .lineToSplineHeading(new Pose2d(-58 + 9.5, -12, Math.PI))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*pick up cone*/})
-                .waitSeconds(0.5)
-                .lineToSplineHeading(new Pose2d(-35, -12, Math.toRadians(50)))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*drop cone*/})
-                .waitSeconds(0.5)
-
-                // third cycle
-                .lineToSplineHeading(new Pose2d(-58 + 9.5, -12, Math.PI))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*pick up cone*/})
-                .waitSeconds(0.5)
-                .lineToSplineHeading(new Pose2d(-35, -12, Math.toRadians(50)))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {/*drop cone*/})
-                .waitSeconds(0.5)
-
-                // park
-                .lineToSplineHeading(new Pose2d(-12, -11, 0))
-                .build();
-
-
-
-
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
@@ -209,6 +95,113 @@ public class autoRedLeft extends LinearOpMode {
         });
 
         telemetry.setMsTransmissionInterval(50);
+
+
+        //HARDWARE MAPPING HERE etc.
+        // Other
+        leftLift = hardwareMap.get(DcMotor.class, "leftLift");
+        rightLift = hardwareMap.get(DcMotor.class, "rightLift");
+
+        // lift motors
+        leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        Servo servoScissor = hardwareMap.get(Servo.class, "servoScissor");
+        Servo verticalServo = hardwareMap.get(Servo.class, "servoScissorLift");
+
+        // Reverse right lift motor
+        rightLift.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
+        Pose2d startPose = new Pose2d(35.5, -62.3, Math.toRadians(180));
+
+        drive.setPoseEstimate(startPose);
+
+        TrajectorySequence leftTraj = drive.trajectorySequenceBuilder(startPose)
+                // preload cone
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> verticalServo.setPosition(1))
+                .UNSTABLE_addTemporalMarkerOffset(3, () -> servoScissor.setPosition(0.67))
+                .UNSTABLE_addTemporalMarkerOffset(6, () -> verticalServo.setPosition(0))
+                .waitSeconds(6)
+
+                .lineToSplineHeading(new Pose2d(11.5, -62.3, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(11.5, -11.5, Math.toRadians(180)))
+                .turn(Math.toRadians(-135))
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> moveLift(0.8, 3300))
+                .waitSeconds(1)
+                .forward(7.25)
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> verticalServo.setPosition(0))
+                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> servoScissor.setPosition(0.5))
+                .waitSeconds(1)
+                .back(7.25)
+                .turn(Math.toRadians(-45))
+
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> moveLift(0.8,0))
+                .waitSeconds(1)
+
+                // park
+                .lineToSplineHeading(new Pose2d(12, -12, Math.toRadians(0)))
+                .build();
+
+
+        TrajectorySequence middleTraj = drive.trajectorySequenceBuilder(startPose)
+                // preload cone
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> verticalServo.setPosition(1))
+                .UNSTABLE_addTemporalMarkerOffset(3, () -> servoScissor.setPosition(0.67))
+                .UNSTABLE_addTemporalMarkerOffset(6, () -> verticalServo.setPosition(0))
+                .waitSeconds(6)
+
+                .lineToSplineHeading(new Pose2d(11.5, -62.3, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(11.5, -11.5, Math.toRadians(180)))
+                .turn(Math.toRadians(-135))
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> moveLift(0.8, 3300))
+                .waitSeconds(1)
+                .forward(7.25)
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> verticalServo.setPosition(0))
+                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> servoScissor.setPosition(0.5))
+                .waitSeconds(1)
+                .back(7.25)
+                .turn(Math.toRadians(-45))
+
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> moveLift(0.8,0))
+                .waitSeconds(1)
+
+                // park
+                .lineToSplineHeading(new Pose2d(35, -12, Math.toRadians(0)))
+                .build();
+
+
+        TrajectorySequence rightTraj = drive.trajectorySequenceBuilder(startPose)
+                // preload cone
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> verticalServo.setPosition(1))
+                .UNSTABLE_addTemporalMarkerOffset(3, () -> servoScissor.setPosition(0.67))
+                .UNSTABLE_addTemporalMarkerOffset(6, () -> verticalServo.setPosition(0))
+                .waitSeconds(6)
+
+                .lineToSplineHeading(new Pose2d(11.5, -62.3, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(11.5, -11.5, Math.toRadians(180)))
+                .turn(Math.toRadians(-135))
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> moveLift(0.8, 3300))
+                .waitSeconds(1)
+                .forward(7.25)
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> verticalServo.setPosition(0))
+                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> servoScissor.setPosition(0.5))
+                .waitSeconds(1)
+                .back(7.25)
+                .turn(Math.toRadians(-45))
+
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> moveLift(0.8,0))
+                .waitSeconds(1)
+
+                // park
+                .lineToSplineHeading(new Pose2d(57.5, -12, Math.toRadians(0)))
+                .build();
 
         /*
          * The INIT-loop:
@@ -290,15 +283,13 @@ public class autoRedLeft extends LinearOpMode {
         }
 
         // autonomous code here
-        if(tagOfInterest == null || tagOfInterest.id == LEFT) {
+        if (tagOfInterest == null || tagOfInterest.id == LEFT) {
             // left trajectory
             drive.followTrajectorySequence(leftTraj);
-
 
         } else if (tagOfInterest.id == MIDDLE) {
             // middle trajectory
             drive.followTrajectorySequence(middleTraj);
-
 
         } else {
             // right trajectory
@@ -306,7 +297,44 @@ public class autoRedLeft extends LinearOpMode {
 
         }
 
+    }
 
+    public void moveLift(double power, int ticks) {
+        leftLift.setTargetPosition(ticks);
+        rightLift.setTargetPosition(ticks);
+
+        setLiftMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        motorPower(power);
+
+        while(leftLift.isBusy() && rightLift.isBusy()) {
+
+            telemetry.addData("encoder-left-lift", leftLift.getCurrentPosition() + " busy= " + leftLift.isBusy());
+            telemetry.addData("encoder-right-lift", rightLift.getCurrentPosition() + " busy= " + rightLift.isBusy());
+            telemetry.update();
+        }
+
+        motorPower(0);
+
+        setLiftMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    /**
+     * Set power of both lift motors
+     * @param power setPower
+     */
+    public void motorPower(double power) {
+        leftLift.setPower(power);
+        rightLift.setPower(power);
+    }
+
+    /**
+     * Change mode of cascading lift
+     * @param mode setMode
+     */
+    public void setLiftMode(DcMotor.RunMode mode) {
+        leftLift.setMode(mode);
+        rightLift.setMode(mode);
     }
 
     void tagToTelemetry(AprilTagDetection detection)
