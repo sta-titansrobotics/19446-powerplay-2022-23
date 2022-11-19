@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -8,7 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 
-@TeleOp
+@Disabled
 public class FreightFrenzyTeleOp extends LinearOpMode {
 
 
@@ -120,10 +121,10 @@ public class FreightFrenzyTeleOp extends LinearOpMode {
             }
 
             // claw a =
-            if (gamepad2.a && clawPos > MIN_POSITION) {
+            if (gamepad2.left_trigger > 0 && clawPos > MIN_POSITION) {
                 clawPos -= 0.1;
             }
-            if (gamepad2.b && clawPos < MAX_POSITION) {
+            if (gamepad2.right_trigger > 0 && clawPos < MAX_POSITION) {
                 clawPos += 0.1;
             }
 

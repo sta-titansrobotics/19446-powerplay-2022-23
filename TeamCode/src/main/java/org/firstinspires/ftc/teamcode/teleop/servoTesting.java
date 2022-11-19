@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.util.Range;
 //blah blah blah
 
 @TeleOp
-public class Powerplay extends LinearOpMode {
+public class servoTesting extends LinearOpMode {
 
     DcMotor motorFL, motorBL, motorFR, motorBR, leftLift, rightLift;
 
@@ -22,6 +22,7 @@ public class Powerplay extends LinearOpMode {
 
     boolean pGA2X = false;
     boolean pGA2A = false;
+    boolean pGA2B = false;
 
     boolean scissorToggle = false;
 
@@ -62,11 +63,6 @@ public class Powerplay extends LinearOpMode {
         double verticalServoPos, scissorPos;
         double MIN_POSITION = 0, MAX_POSITION = 1;
 
-        int GROUND = 0;
-        int LOW = 1700;
-        int MIDDLE = 2900;
-        int HIGH = 4000;
-
         waitForStart();
 
         // set initial positions
@@ -100,39 +96,19 @@ public class Powerplay extends LinearOpMode {
             // lift
             if (gamepad2.left_stick_y < 0) {
 
-                leftLift.setPower(-gamepad2.left_stick_y * 0.85);
-                rightLift.setPower(-gamepad2.left_stick_y * 0.85);
+                    leftLift.setPower(-gamepad2.left_stick_y * 0.85);
+                    rightLift.setPower(-gamepad2.left_stick_y * 0.85);
 
-                if (verticalServoPos > MIN_POSITION) {
-                    verticalServoPos -= 0.01;
-                }
 
             } else if (gamepad2.left_stick_y > 0) {
 
-                if (leftLift.getCurrentPosition() > 0) {
                     leftLift.setPower(-gamepad2.left_stick_y * 0.30);
-                }
-
-                if (rightLift.getCurrentPosition() > 0) {
                     rightLift.setPower(-gamepad2.left_stick_y * 0.30);
-                }
 
 
-
-                if (verticalServoPos < MAX_POSITION) {
-                    verticalServoPos += 0.01;
-                }
             } else {
                 leftLift.setPower(0);
                 rightLift.setPower(0);
-            }
-
-            if (leftLift.getCurrentPosition() < 0 ) {
-                leftLift.setPower(0.5);
-            }
-
-            if (rightLift.getCurrentPosition() < 0) {
-                rightLift.setPower(0.5);
             }
 
             // vertical slider
@@ -164,11 +140,7 @@ public class Powerplay extends LinearOpMode {
             }
             pGA2Y = ga2Y;
 
-            boolean ga2A = gamepad2.a;
-            if (ga2A && !pGA2A) {
-                moveLift(0.8, 3100);
-            }
-            pGA2A = ga2A;
+
 
 
 
@@ -193,49 +165,6 @@ public class Powerplay extends LinearOpMode {
 
         }
 
-    }
-
-    /**
-     * Powers lift to target position
-     * @param power desired power
-     * @param ticks target position
-     */
-    public void moveLift(double power, int ticks) {
-        leftLift.setTargetPosition(ticks);
-        rightLift.setTargetPosition(ticks);
-
-        setLiftMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        motorPower(power);
-
-        while(leftLift.isBusy() && rightLift.isBusy()) {
-
-            telemetry.addData("encoder-left-lift", leftLift.getCurrentPosition() + " busy= " + leftLift.isBusy());
-            telemetry.addData("encoder-right-lift", rightLift.getCurrentPosition() + " busy= " + rightLift.isBusy());
-            telemetry.update();
-        }
-
-        motorPower(0);
-
-        setLiftMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    }
-
-    /**
-     * Set power of both lift motors
-     * @param power setPower
-     */
-    public void motorPower(double power) {
-        leftLift.setPower(power);
-        rightLift.setPower(power);
-    }
-
-    /**
-     * Change mode of cascading lift
-     * @param mode setMode
-     */
-    public void setLiftMode(DcMotor.RunMode mode) {
-        leftLift.setMode(mode);
-        rightLift.setMode(mode);
     }
 
 
